@@ -15,11 +15,13 @@ class Person(object):
     def assign_qualifier(self, qualifier):
         self.qualifier = qualifier
 
+
 class Staff(Person):
     def __init__(self, f_name, l_name):
         super(Staff, self).__init__(
             f_name, l_name, person_label="Staff"
         )
+
 
 class Fellow(Person):
     def __init__(self, f_name, l_name):
