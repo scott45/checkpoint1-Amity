@@ -1,5 +1,6 @@
 __author__ = 'scotty'
 
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import Column, Integer, String
@@ -8,6 +9,7 @@ from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
 
 
+# people table
 class People(Base):
     __tablename__ = 'people'
     id = Column(Integer, primary_key=True)
@@ -22,6 +24,7 @@ class People(Base):
         return "<Person(person_name='%s')>" % self.person_name
 
 
+# rooms table
 class Rooms(Base):
     __tablename__ = 'rooms'
     id = Column(Integer, primary_key=True)
@@ -32,4 +35,16 @@ class Rooms(Base):
     def __repr__(self):
         return "<Room(room_name='%s')>" % self.room_name
 
-    
+
+# Creates a db connection object
+class DatabaseManager(object):
+    def __init__(self, db_name=None):
+        self.db_name = db_name
+        if self.db_name:
+            self.db_name = db_name + '.sqlite'
+        else:
+            self.db_name = 'default_amity_db.sqlite'
+        self.engine = create_engine('sqlite:///' + self.db_name)
+        self.session = sessionmaker()
+        self.session.configure(bind=self.engine)
+        Base.metadata.create_all(self.engine)
