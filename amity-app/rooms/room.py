@@ -1,7 +1,7 @@
 __author__ = 'scotty'
 
 
-# room class models the rooms in amity and is a blueprint inheritance between office and livingspace
+# room class models the rooms in amity and is to be inherited by class office and livingspace
 
 class Room(object):
     def __init__(self, room_name, room_type, capacity):
@@ -18,9 +18,17 @@ class Room(object):
 
 
 class LivingSpace(Room):
-
-    # methods from the Room class and overrides properties such as capacity using the super function call.
+    # Ls class method from the Room class and overrides some properties using the super function call.
 
     def __init__(self, room_name):
         super(LivingSpace, self).__init__(
-            room_name, room_type='Living Space', capacity=4)
+            room_name, room_type='Living Space', capacity=4
+        )
+
+
+class Office(Room):
+    # office class method from the Room class and overrides some properties using the super function call.
+
+    def __init__(self, room_name):
+        super(Office, self).__init__(room_name, room_type='Office', capacity=6
+        )
