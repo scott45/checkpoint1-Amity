@@ -5,9 +5,9 @@ __author__ = 'scotty'
 
 class Room(object):
     def __init__(self, room_name, room_type, capacity):
+        self.room_name = room_name.title()
         self.room_type = room_type.strip().title()
         self.capacity = capacity
-        self.room_name = room_name.title()
         self.occupants = []
 
     # functionality for adding a person to a room
