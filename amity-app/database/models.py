@@ -1,9 +1,8 @@
 __author__ = 'scotty'
 
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
@@ -36,14 +35,14 @@ class Rooms(Base):
         return "<Room(room_name='%s')>" % self.room_name
 
 
-# Creates a db connection object
+# Establishes a database connection
 class DatabaseManager(object):
     def __init__(self, db_name=None):
         self.db_name = db_name
         if self.db_name:
             self.db_name = db_name + '.sqlite'
         else:
-            self.db_name = 'default_amity_db.sqlite'
+            self.db_name = 'amity_db.sqlite'
         self.engine = create_engine('sqlite:///' + self.db_name)
         self.session = sessionmaker()
         self.session.configure(bind=self.engine)
