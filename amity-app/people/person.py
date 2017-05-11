@@ -1,7 +1,7 @@
 __author__ = 'scotty'
 
 
-# person class models the people in amity and is a blueprint of inheritance superclass of staff and fellow
+# person class models the people in amity and is to be inherited by class staff and fellow
 
 class Person(object):
     def __init__(self, f_name, l_name, person_label):
@@ -19,6 +19,8 @@ class Person(object):
 
 
 class Staff(Person):
+    # staff class method from the person class and overrides some properties using the super function call.
+
     def __init__(self, f_name, l_name):
         super(Staff, self).__init__(
             f_name, l_name, person_label="Staff"
@@ -26,6 +28,8 @@ class Staff(Person):
 
 
 class Fellow(Person):
+    # fellow class method from the person class and overrides some properties using the super function call
+
     def __init__(self, f_name, l_name):
         super(Fellow, self).__init__(
             f_name, l_name, person_label="Fellow"
