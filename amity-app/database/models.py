@@ -20,3 +20,16 @@ class People(Base):
 
     def __repr__(self):
         return "<Person(person_name='%s')>" % self.person_name
+
+
+class Rooms(Base):
+    __tablename__ = 'rooms'
+    id = Column(Integer, primary_key=True)
+    room_name = Column(String(25), nullable=False)
+    room_type = Column(String(25), nullable=False)
+    room_capacity = Column(Integer)
+
+    def __repr__(self):
+        return "<Room(room_name='%s')>" % self.room_name
+
+    
