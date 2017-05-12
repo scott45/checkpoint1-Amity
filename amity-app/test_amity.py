@@ -130,29 +130,73 @@ class TestAmityFunctionality(unittest.TestCase):
                 self.assertIn('timothy wikedzi', room.occupants)
                 self.assertEqual(len(room.occupants), 1)
 
-    # tests that when a  room is created, user is notified
+    # tests that objects are created
     def test_person_objects_are_created(self):
-        pass
+        self.amity.create_room('o', 'tent4')
+        self.amity.create_room('l', 'html')
+        prints = self.amity.validate_person('kitui', 'daniel', 'Fellow', 'y')
+        person = self.amity.generate_qualifier(prints)
+        for person in self.amity.people:
+            if person.full_name == 'kitui daniel':
+                self.assertEqual(person.person_type, 'Fellow')
+                self.assertEqual(person.identifier, 'F1')
+
+        prints= self.amity.validate_person('taracha', 'rogers', 'Staff', 'n')
+        person = self.amity.generate_identifier(prints)
+        for person in self.amity.people:
+            if person.full_name == 'taracha rogers':
+                self.assertEqual(person.person_type, 'Staff')
+                self.assertEqual(person.identifier, 'S1')
+
+
 
     # tests that when a  room is created, user is notified
     def test_get_identifier_if_no_people_added(self):
-        pass
+        self.assertEqual(self.amity.get_identifier(
+            'Lydiah', 'Kan'), 'No people added')
 
     # tests that when a  room is created, user is notified
     def test_get_identifier_if_people_added(self):
-        pass
+        self.amity.create_room('o', 'yellow')
+        self.amity.create_room('l', 'blue')
+        res = self.amity.validate_person('brandon', 'balagu', 'Fellow', 'y')
+        res = self.amity.generate_identifier(res)
+        self.assertEqual(self.amity.get_identifier(
+            'brandon', 'balagu'), 'F1')
 
     # tests that when a  room is created, user is notified
     def test_reallocate_person(self):
-        pass
+        self.amity.create_room('o', 'Jupiter')
+        self.amity.create_room('o', 'Pluto')
+        res = self.amity.validate_person('isaac', 'kimani', 'staff', 'n')
+        person = self.amity.generate_identifier(res)
+        self.amity.allocate_room(person)
+        res = self.amity.reallocate_person('S1', [])
+        self.assertEqual(res, "Error. Please enter valid room name.")
 
     # tests that when a  room is created, user is notified
     def test_reallocate_person_when_room_does_not_exist(self):
-        pass
+        self.amity.create_room('o', 'Mars')
+        self.amity.create_room('o', 'Venus')
+        res = self.amity.validate_person('Nduta', 'Nungari', 'staff', 'n')
+        person = self.amity.generate_identifier(res)
+        self.amity.allocate_room(person)
+        res = self.amity.reallocate_person('S1', 'Neptune')
+        self.assertEqual(res, "Room does not exist.")
 
     # tests that when a  room is created, user is notified
     def test_reallocate_person_when_person_accomodate_is_N(self):
-        pass
+        self.amity.create_room('o', 'Mars')
+        self.amity.create_room('l', 'Venus')
+        res = self.amity.validate_person('Xander', 'Akura', 'Fellow', 'n')
+        person = self.amity.generate_identifier(res)
+        self.amity.allocate_room(person)
+        res = self.amity.reallocate_person('F1', 'Venus')
+        self.assertEqual(res, 'Fellow does not want accomodation')
+        for room in self.amity.rooms:
+            if room.room_name == 'Venus':
+                self.assertNotIn('Xander Akura', room.occupants)
+
 
     # tests that when a  room is created, user is notified
     def test_reallocate_to_same_room(self):
