@@ -148,21 +148,19 @@ class TestAmityFunctionality(unittest.TestCase):
                 self.assertEqual(person.person_type, 'Staff')
                 self.assertEqual(person.identifier, 'S1')
 
+    # tests qualifier error is generated if no people
+    def test_get_qualifier_if_no_people_created(self):
+        self.assertEqual(self.amity.get_qualifier(
+            'scott', 'businge'), 'you havent created people yet')
 
-
-    # tests that when a  room is created, user is notified
-    def test_get_identifier_if_no_people_added(self):
+    # tests qualifier is generated if people are added
+    def test_get_qualfier_if_people_created(self):
+        self.amity.create_room('o', 'tent5')
+        self.amity.create_room('l', 'ruby')
+        prints = self.amity.validate_person('waithera', 'doris', 'Fellow', 'y')
+        res = self.amity.generate_identifier(prints)
         self.assertEqual(self.amity.get_identifier(
-            'Lydiah', 'Kan'), 'No people added')
-
-    # tests that when a  room is created, user is notified
-    def test_get_identifier_if_people_added(self):
-        self.amity.create_room('o', 'yellow')
-        self.amity.create_room('l', 'blue')
-        res = self.amity.validate_person('brandon', 'balagu', 'Fellow', 'y')
-        res = self.amity.generate_identifier(res)
-        self.assertEqual(self.amity.get_identifier(
-            'brandon', 'balagu'), 'F1')
+            'waithera', 'doris'), 'F1')
 
     # tests that when a  room is created, user is notified
     def test_reallocate_person(self):
