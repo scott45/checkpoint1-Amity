@@ -29,6 +29,7 @@ class TestAmityFunctionality(unittest.TestCase):
                          'Error. Invalid room type input.',
                          msg='Input O or L for room type.')
 
+    # tests that a room is successfully created
     def test_create_room_method(self):
         with patch("amity-app.rooms.room.Office"):
             self.amity.create_room("o", "uganda")
@@ -37,6 +38,7 @@ class TestAmityFunctionality(unittest.TestCase):
             self.amity.create_room('l', 'kenya')
             self.assertIn('kenya', self.amity.living_spaces['available'])
 
+    # tests that rooms number is increased by one after a room is added
     def test_create_room_increases_rooms_list_by_one(self):
         rooms_before = len(self.amity.rooms)
         with patch("amity-app.rooms.room.Office"):
@@ -48,8 +50,12 @@ class TestAmityFunctionality(unittest.TestCase):
             self.assertAlmostEquals(
                 (rooms_after_next - rooms_before), 2)
 
+    # tests that a room can't be created twice
     def test_living_space_can_only_be_created_once(self):
-        pass
+        with patch('amity-app.rooms.room.LivingSpace'):
+            self.amity.create_room('l', 'php')
+            db = self.amity.create_room('l', 'php')
+            self.assertEqual(db, 'php already exists.')
 
     def test_office_can_only_be_created_once(self):
         pass
