@@ -154,23 +154,23 @@ class TestAmityFunctionality(unittest.TestCase):
             'scott', 'businge'), 'you havent created people yet')
 
     # tests qualifier is generated if people are added
-    def test_get_qualfier_if_people_created(self):
+    def test_get_qualifier_if_people_created(self):
         self.amity.create_room('o', 'tent5')
         self.amity.create_room('l', 'ruby')
         prints = self.amity.validate_person('waithera', 'doris', 'Fellow', 'y')
-        res = self.amity.generate_identifier(prints)
+        res = self.amity.generate_qualifier(prints)
         self.assertEqual(self.amity.get_identifier(
             'waithera', 'doris'), 'F1')
 
-    # tests that when a  room is created, user is notified
-    def test_reallocate_person(self):
-        self.amity.create_room('o', 'Jupiter')
-        self.amity.create_room('o', 'Pluto')
-        res = self.amity.validate_person('isaac', 'kimani', 'staff', 'n')
-        person = self.amity.generate_identifier(res)
+    # tests reallocation functionality
+    def test_reallocate_someone(self):
+        self.amity.create_room('o', 'tent6')
+        self.amity.create_room('o', 'tent7')
+        prints = self.amity.validate_person('driver', 'papa', 'staff', 'n')
+        person = self.amity.generate_qualifier(prints)
         self.amity.allocate_room(person)
-        res = self.amity.reallocate_person('S1', [])
-        self.assertEqual(res, "Error. Please enter valid room name.")
+        yah = self.amity.reallocate_person('tsavo', [])
+        self.assertEqual(yah, "Error. Please enter valid room name.")
 
     # tests that when a  room is created, user is notified
     def test_reallocate_person_when_room_does_not_exist(self):
