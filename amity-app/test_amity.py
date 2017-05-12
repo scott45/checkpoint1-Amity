@@ -79,7 +79,7 @@ class TestAmityFunctionality(unittest.TestCase):
                          '404 No rooms have been created yet to contain allocations.')
 
     # tests that when a person is created without creating rooms, it will trigger an error
-    def test_returns_error_if_no_rooms_within_system(self):
+    def test_returns_error_if_no_rooms_created_in_system(self):
         prints = self.amity.validate_person('scott', 'businge', 'Fellow', 'Y')
         self.assertEqual(prints, 'currently no rooms in the system.')
 
@@ -94,15 +94,19 @@ class TestAmityFunctionality(unittest.TestCase):
         self.assertEqual(feedss, 'Names should be of string type')
 
     # tests that a person's label is right
-    def test_validation_of_people_types(self):
+    def test_validation_of_people_labels(self):
         self.amity.create_room('o', 'camelot')
         res = self.amity.validate_person('mukiibi', 'david', 'tourist', 'y')
         self.assertTrue(res)
         self.assertEqual(res, 'tourist is an invalid Person label. it can either be staff or fellow')
 
-    # tests that when a  room is created, user is notified
-    def test_wants_accomodation_is_either_y_or_n(self):
-        pass
+    # tests that accomodation input is either y or n
+    def test_wants_accomodation_is_only_y_or_n(self):
+        self.amity.create_room('o', 'orange')
+        prints = self.amity.validate_person(
+            'daisy', 'macharia', 'Fellow', 'No')
+        self.assertTrue(prints)
+        self.assertEqual(prints, 'Input must either be Y or N')
 
     # tests that when a  room is created, user is notified
     def test_validation_if_person_fellow_and_wants_accomodation(self):
