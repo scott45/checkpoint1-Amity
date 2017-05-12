@@ -108,6 +108,13 @@ class TestAmityFunctionality(unittest.TestCase):
         self.assertTrue(prints)
         self.assertEqual(prints, 'Input must either be Y or N')
 
+    # tests that validation is correct but missing an office
+    def test_validation_if_person_fellow_and_wants_accommodation(self):
+        self.amity.create_room('o', 'tent3')
+        prints = self.amity.validate_person('tumbo', 'kevin', 'Fellow', 'Y')
+        self.assertTrue(prints)
+        self.assertEqual(prints, 'No Living space for kevin.')
+
     # tests that validation is correct
     def test_validation_if_submissions_are_right(self):
         self.amity.create_room('l', 'scala')
@@ -122,10 +129,6 @@ class TestAmityFunctionality(unittest.TestCase):
             if room.room_name == 'tent2':
                 self.assertIn('timothy wikedzi', room.occupants)
                 self.assertEqual(len(room.occupants), 1)
-
-    # tests that when a  room is created, user is notified
-    def test_passes_validation_and_creates_person(self):
-        pass
 
     # tests that when a  room is created, user is notified
     def test_person_objects_are_created(self):
