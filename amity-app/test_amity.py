@@ -73,14 +73,17 @@ class TestAmityFunctionality(unittest.TestCase):
             prints = self.amity.create_room('l', 'java')
             self.assertEqual(prints, 'Room java created.')
 
+    # tests to display no rooms have been created
     def test_returns_no_allocations_if_no_rooms_created(self):
         self.assertEqual(self.amity.print_allocations(),
                          '404 No rooms have been created yet to contain allocations.')
 
+    # tests that when a person is created without creating rooms, it will trigger an error
     def test_returns_error_if_no_rooms_within_system(self):
         prints = self.amity.validate_person('scott', 'businge', 'Fellow', 'Y')
         self.assertEqual(prints, 'currently no rooms in the system.')
 
+    # tests that a persons names are validated
     def test_validation_of_people_names(self):
         self.amity.create_room('o', 'tent')
         feeds = self.amity.validate_person('scott', 5, 'Fellow', 'y')
@@ -88,41 +91,56 @@ class TestAmityFunctionality(unittest.TestCase):
         self.assertEqual(feeds, 'invalid name inputs.')
         feedss = self.amity.validate_person('ja3sk9900', 'onyango', 'Fellow', 'Y')
         self.assertTrue(feedss)
-        self.assertEqual(feedss, 'Names should be strings')
+        self.assertEqual(feedss, 'Names should be of string type')
 
+    # tests that a person's label is right
     def test_validation_of_people_types(self):
-        pass
+        self.amity.create_room('o', 'camelot')
+        res = self.amity.validate_person('mukiibi', 'david', 'tourist', 'y')
+        self.assertTrue(res)
+        self.assertEqual(res, 'tourist is an invalid Person label. it can either be staff or fellow')
 
+    # tests that when a  room is created, user is notified
     def test_wants_accomodation_is_either_y_or_n(self):
         pass
 
+    # tests that when a  room is created, user is notified
     def test_validation_if_person_fellow_and_wants_accomodation(self):
         pass
 
+    # tests that when a  room is created, user is notified
     def test_passes_validation_and_creates_person(self):
         pass
 
+    # tests that when a  room is created, user is notified
     def test_person_objects_are_created(self):
         pass
 
+    # tests that when a  room is created, user is notified
     def test_get_identifier_if_no_people_added(self):
         pass
 
+    # tests that when a  room is created, user is notified
     def test_get_identifier_if_people_added(self):
         pass
 
+    # tests that when a  room is created, user is notified
     def test_reallocate_person(self):
         pass
 
+    # tests that when a  room is created, user is notified
     def test_reallocate_person_when_room_does_not_exist(self):
         pass
 
+    # tests that when a  room is created, user is notified
     def test_reallocate_person_when_person_accomodate_is_N(self):
         pass
 
+    # tests that when a  room is created, user is notified
     def test_reallocate_to_same_room(self):
         pass
 
+    # tests that when a  room is created, user is notified
     def test_reallocate_to_same_room_if_person_id_non_exitent(self):
         pass
 
