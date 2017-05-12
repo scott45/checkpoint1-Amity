@@ -82,7 +82,13 @@ class TestAmityFunctionality(unittest.TestCase):
         self.assertEqual(prints, 'currently no rooms in the system.')
 
     def test_validation_of_people_names(self):
-        pass
+        self.amity.create_room('o', 'tent')
+        feeds = self.amity.validate_person('scott', 5, 'Fellow', 'y')
+        self.assertTrue(feeds)
+        self.assertEqual(feeds, 'invalid name inputs.')
+        feedss = self.amity.validate_person('ja3sk9900', 'onyango', 'Fellow', 'Y')
+        self.assertTrue(feedss)
+        self.assertEqual(feedss, 'Names should be strings')
 
     def test_validation_of_people_types(self):
         pass
