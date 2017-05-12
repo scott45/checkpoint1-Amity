@@ -108,9 +108,20 @@ class TestAmityFunctionality(unittest.TestCase):
         self.assertTrue(prints)
         self.assertEqual(prints, 'Input must either be Y or N')
 
-    # tests that when a  room is created, user is notified
-    def test_validation_if_person_fellow_and_wants_accomodation(self):
-        pass
+    # tests that validation is correct
+    def test_validation_if_submissions_are_right(self):
+        self.amity.create_room('l', 'scala')
+        self.amity.create_room('o', 'tent2')
+        prints = self.amity.validate_person('timothy', 'wikedzi', 'Fellow', 'y')
+        person = self.amity.generate_qualifier(prints)
+        self.amity.allocate_room(person)
+        for room in self.amity.rooms:
+            if room.room_name == 'scala':
+                self.assertIn('timothy wikedzi', room.occupants)
+                self.assertEqual(len(room.occupants), 1)
+            if room.room_name == 'tent2':
+                self.assertIn('timothy wikedzi', room.occupants)
+                self.assertEqual(len(room.occupants), 1)
 
     # tests that when a  room is created, user is notified
     def test_passes_validation_and_creates_person(self):
