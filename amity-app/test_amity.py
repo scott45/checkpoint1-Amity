@@ -14,14 +14,14 @@ class TestAmityFunctionality(unittest.TestCase):
         self.amity = Amity()
 
     # tests that the class is clean and holds nothing at the time its called
-    def test_amity_class_initialises_with_nothing(self):
+    def test_amity_class_initialises_empty(self):
         self.assertEquals(len(self.amity.rooms), 0)
         self.assertEquals(len(self.amity.people), 0)
         self.assertEquals(len(self.amity.fellows), 0)
         self.assertEquals(len(self.amity.staff), 0)
 
     # tests the string input is correct
-    def test_returns_error_when_non_string_is_addded(self):
+    def test_returns_error_when_non_string_submitted(self):
         self.assertEqual(self.amity.create_room(
             0, 2), 'ValueError. Invalid input',
             msg='Inputs must be of string type')
@@ -30,7 +30,7 @@ class TestAmityFunctionality(unittest.TestCase):
                          msg='Input O or L for room type.')
 
     # tests that a room is successfully created
-    def test_create_room_method(self):
+    def test_create_room_functionality(self):
         with patch("amity-app.rooms.room.Office"):
             self.amity.create_room("o", "uganda")
             self.assertIn("uganda", self.amity.offices['available'])
@@ -39,7 +39,7 @@ class TestAmityFunctionality(unittest.TestCase):
             self.assertIn('kenya', self.amity.living_spaces['available'])
 
     # tests that rooms number is increased by one after a room is added
-    def test_create_room_increases_rooms_list_by_one(self):
+    def test_create_room_list_increments_by_one(self):
         rooms_before = len(self.amity.rooms)
         with patch("amity-app.rooms.room.Office"):
             self.amity.create_room("o", "uganda")
@@ -51,17 +51,26 @@ class TestAmityFunctionality(unittest.TestCase):
                 (rooms_after_next - rooms_before), 2)
 
     # tests that a room can't be created twice
-    def test_living_space_can_only_be_created_once(self):
+    def test_living_space_cant_be_created_twice(self):
         with patch('amity-app.rooms.room.LivingSpace'):
             self.amity.create_room('l', 'php')
             db = self.amity.create_room('l', 'php')
             self.assertEqual(db, 'php already exists.')
 
+    # tests that an office can only be created once
     def test_office_can_only_be_created_once(self):
-        pass
+        with patch('amity-app.rooms.room.Office'):
+            self.amity.create_room('o', 'krypton')
+            db2 = self.amity.create_room('o', 'krypton')
+            self.assertEqual(db2, 'krypton already exists.')
 
     def test_room_creation_when_successful(self):
-        pass
+        with patch('amity-app.rooms.room.Office'):
+            result = self.amity.create_room('o', 'tsavo')
+            self.assertEqual(result, 'Room tsavo created.')
+        with patch('amity-app.rooms.room.LivingSpace'):
+            result = self.amity.create_room('l', 'java')
+            self.assertEqual(result, 'Room java created.')
 
     def test_returns_no_allocations_if_no_rooms_created(self):
         pass
