@@ -8,24 +8,45 @@ from amity import Amity
 from mock import patch
 
 
+# tests all functionality of amity class in there defined methods
 class TestAmityFunctionality(unittest.TestCase):
     def setUp(self):
         self.amity = Amity()
 
+    # tests that the class is clean and holds nothing at the time its called
     def test_amity_class_initialises_with_nothing(self):
         self.assertEquals(len(self.amity.rooms), 0)
         self.assertEquals(len(self.amity.people), 0)
         self.assertEquals(len(self.amity.fellows), 0)
         self.assertEquals(len(self.amity.staff), 0)
 
+    # tests the string input is correct
     def test_returns_error_when_non_string_is_addded(self):
-        pass
+        self.assertEqual(self.amity.create_room(
+            0, 2), 'ValueError. Invalid input',
+            msg='Inputs must be of string type')
+        self.assertEqual(self.amity.create_room('G', 'Glow'),
+                         'Error. Invalid room type input.',
+                         msg='Input O or L for room type.')
 
     def test_create_room_method(self):
-        pass
+        with patch("amity-app.rooms.room.Office"):
+            self.amity.create_room("o", "uganda")
+            self.assertIn("uganda", self.amity.offices['available'])
+        with patch("amity-app.rooms.room.LivingSpace"):
+            self.amity.create_room('l', 'kenya')
+            self.assertIn('kenya', self.amity.living_spaces['available'])
 
     def test_create_room_increases_rooms_list_by_one(self):
-        pass
+        rooms_before = len(self.amity.rooms)
+        with patch("amity-app.rooms.room.Office"):
+            self.amity.create_room("o", "uganda")
+            rooms_after = len(self.amity.rooms)
+            self.assertEquals((rooms_after - rooms_before), 1)
+            self.amity.create_room('o', 'kenya')
+            rooms_after_next = len(self.amity.rooms)
+            self.assertAlmostEquals(
+                (rooms_after_next - rooms_before), 2)
 
     def test_living_space_can_only_be_created_once(self):
         pass
