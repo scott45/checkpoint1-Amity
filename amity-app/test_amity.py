@@ -64,19 +64,22 @@ class TestAmityFunctionality(unittest.TestCase):
             db2 = self.amity.create_room('o', 'krypton')
             self.assertEqual(db2, 'krypton already exists.')
 
+    # tests that when a  room is created, user is notified
     def test_room_creation_when_successful(self):
         with patch('amity-app.rooms.room.Office'):
-            result = self.amity.create_room('o', 'tsavo')
-            self.assertEqual(result, 'Room tsavo created.')
+            prints = self.amity.create_room('o', 'tsavo')
+            self.assertEqual(prints, 'Room tsavo created.')
         with patch('amity-app.rooms.room.LivingSpace'):
-            result = self.amity.create_room('l', 'java')
-            self.assertEqual(result, 'Room java created.')
+            prints = self.amity.create_room('l', 'java')
+            self.assertEqual(prints, 'Room java created.')
 
     def test_returns_no_allocations_if_no_rooms_created(self):
-        pass
+        self.assertEqual(self.amity.print_allocations(),
+                         '404 No rooms have been created yet to contain allocations.')
 
     def test_returns_error_if_no_rooms_within_system(self):
-        pass
+        prints = self.amity.validate_person('scott', 'businge', 'Fellow', 'Y')
+        self.assertEqual(prints, 'currently no rooms in the system.')
 
     def test_validation_of_people_names(self):
         pass
