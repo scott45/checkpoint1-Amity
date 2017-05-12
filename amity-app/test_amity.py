@@ -3,7 +3,7 @@ __author__ = 'scotty'
 import os
 
 import unittest
-from .amity import Amity
+from amity import Amity
 
 from mock import patch
 
@@ -13,7 +13,10 @@ class TestAmityFunctionality(unittest.TestCase):
         self.amity = Amity()
 
     def test_amity_class_initialises_with_nothing(self):
-        pass
+        self.assertEquals(len(self.amity.rooms), 0)
+        self.assertEquals(len(self.amity.people), 0)
+        self.assertEquals(len(self.amity.fellows), 0)
+        self.assertEquals(len(self.amity.staff), 0)
 
     def test_returns_error_when_non_string_is_addded(self):
         pass
