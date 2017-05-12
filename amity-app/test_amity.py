@@ -169,18 +169,18 @@ class TestAmityFunctionality(unittest.TestCase):
         prints = self.amity.validate_person('driver', 'papa', 'staff', 'n')
         person = self.amity.generate_qualifier(prints)
         self.amity.allocate_room(person)
-        yah = self.amity.reallocate_person('tsavo', [])
-        self.assertEqual(yah, "Error. Please enter valid room name.")
+        yah = self.amity.reallocate_person('r.13', [])
+        self.assertEqual(yah, "Error... invalid room data-type.")
 
-    # tests that when a  room is created, user is notified
-    def test_reallocate_person_when_room_does_not_exist(self):
-        self.amity.create_room('o', 'Mars')
-        self.amity.create_room('o', 'Venus')
-        res = self.amity.validate_person('Nduta', 'Nungari', 'staff', 'n')
-        person = self.amity.generate_identifier(res)
+    # tests reallocation on wrong room name
+    def test_reallocate_person_when_room_uncreated(self):
+        self.amity.create_room('o', 'tent8')
+        self.amity.create_room('o', 'tent9')
+        prints = self.amity.validate_person('marion', 'food', 'staff', 'n')
+        person = self.amity.generate_qualifier(prints)
         self.amity.allocate_room(person)
-        res = self.amity.reallocate_person('S1', 'Neptune')
-        self.assertEqual(res, "Room does not exist.")
+        respond = self.amity.reallocate_person('S1', 'tent10')
+        self.assertEqual(respond, "unknown room name.")
 
     # tests that when a  room is created, user is notified
     def test_reallocate_person_when_person_accomodate_is_N(self):
