@@ -184,16 +184,16 @@ class TestAmityFunctionality(unittest.TestCase):
 
     # tests that when a  room is created, user is notified
     def test_reallocate_person_when_person_accomodate_is_N(self):
-        self.amity.create_room('o', 'Mars')
-        self.amity.create_room('l', 'Venus')
-        res = self.amity.validate_person('Xander', 'Akura', 'Fellow', 'n')
-        person = self.amity.generate_identifier(res)
+        self.amity.create_room('o', 'tsavo2')
+        self.amity.create_room('l', 'swift')
+        prints = self.amity.validate_person('victoria', 'Auka', 'Fellow', 'n')
+        person = self.amity.generate_identifier(prints)
         self.amity.allocate_room(person)
-        res = self.amity.reallocate_person('F1', 'Venus')
-        self.assertEqual(res, 'Fellow does not want accomodation')
+        respond = self.amity.reallocate_person('F1', 'victoria')
+        self.assertEqual(respond, 'Accommodation isnt needed by this fellow')
         for room in self.amity.rooms:
-            if room.room_name == 'Venus':
-                self.assertNotIn('Xander Akura', room.occupants)
+            if room.room_name == 'swift':
+                self.assertNotIn('victoria Auka', room.occupants)
 
 
     # tests that when a  room is created, user is notified
