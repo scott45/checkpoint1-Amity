@@ -268,18 +268,19 @@ class TestAmityFunctionality(unittest.TestCase):
         get = self.amity.print_unallocated()
         self.assertTrue(get, 'Some people unallocated.')
 
+    # tests save state
     def test_save_state(self):
-        self.amity.create_room('o', 'Witherspoon')
-        res = self.amity.validate_person('Lyon', 'Witherspoon', 'Staff', 'n')
-        person = self.amity.generate_identifier(res)
+        self.amity.create_room('o', 'roysambu')
+        respond = self.amity.validate_person('mahad', 'kironde', 'Staff', 'n')
+        person = self.amity.generate_qualifier(respond)
         self.amity.allocate_room(person)
         self.assertFalse(os.path.exists('default_db_self.amity.sqlite'))
 
-    def save_state_works(self):
-        self.amity.create_room('o', 'Witherspoon')
-        res = self.amity.validate_person('Lyon', 'Witherspoon', 'Staff', 'n')
-        person = self.amity.generate_identifier(res)
+    # tests save state successful
+    def test_save_state_works(self):
+        self.amity.create_room('o', 'roysambu')
+        respond = self.amity.validate_person('mahad', 'kironde', 'Staff', 'n')
+        person = self.amity.generate_identifier(respond)
         self.amity.allocate_room(person)
-        res = self.amity.save_state()
-        self.assertEqual(res, True)
-
+        yah = self.amity.save_state()
+        self.assertEqual(yah, True)
