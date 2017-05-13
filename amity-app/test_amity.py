@@ -230,12 +230,12 @@ class TestAmityFunctionality(unittest.TestCase):
                 self.assertIn('baby wange', room.occupants)
 
     def test_reallocate_unallocated(self):
-        self.amity.create_room('o', 'prayar')
-        res = self.amity.validate_person('Austin', 'Mugage', 'staff')
-        person = self.amity.generate_identifier(res)
+        self.amity.create_room('o', 'pro')
+        res = self.amity.validate_person('paul', 'upendo', 'staff')
+        person = self.amity.generate_qualifier(res)
         self.amity.allocate_room(person)
-        res = self.amity.reallocate_unallocated('s65', 'Prayar')
-        self.assertEqual(res, 'Person ID does not exist.')
+        yoh = self.amity.reallocate_unallocated('s6', 'pro')
+        self.assertEqual(yoh, 'that Person ID does not exist.')
 
     def test_print_room_if_no_rooms(self):
         res = self.amity.print_room('Jupite')
