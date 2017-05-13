@@ -196,7 +196,7 @@ class TestAmityFunctionality(unittest.TestCase):
                 self.assertNotIn('victoria Auka', room.occupants)
 
     # tests that reallocation to the same room raises an error
-    def test_reallocate_to_same_room(self):
+    def test_reallocate_to_similar_room(self):
         self.amity.create_room('o', 'tsavo3')
         res = self.amity.validate_person('dominic', 'motuka', 'Fellow', 'n')
         person = self.amity.generate_identifier(res)
@@ -204,16 +204,15 @@ class TestAmityFunctionality(unittest.TestCase):
         res = self.amity.reallocate_person('F1', 'tsavo3')
         self.assertEqual(res, 'reallocation to same room not possible')
 
-    # tests that when a  room is created, user is notified
-    def test_reallocate_to_same_room_if_person_id_non_exitent(self):
-        self.amity.create_room('o', 'Mars')
-        self.amity.create_room('o', 'Venus')
-        res = self.amity.validate_person(
-            'serallynnette', 'wanjiku', 'Staff', 'n')
-        person = self.amity.generate_identifier(res)
+    # tests that reallocation to the same room raises an error if id doesnt exist
+    def test_reallocate_to_similar_room_with_fake_id(self):
+        self.amity.create_room('o', 'tsavo5')
+        self.amity.create_room('o', 'krypton2')
+        res = self.amity.validate_person('opondo', 'oscar', 'Fellow', 'n')
+        person = self.amity.generate_qualifier(res)
         self.amity.allocate_room(person)
-        res = self.amity.reallocate_person('Staff1', 'Mars')
-        self.assertEqual(res, 'Invalid person id.')
+        res = self.amity.reallocate_person('FELLOW.1', 'Mars')
+        self.assertEqual(res, 'Invalid person id, its unknown')
 
     def test_reallocate_person_works(self):
         self.amity.create_room('o', 'valhalla')
