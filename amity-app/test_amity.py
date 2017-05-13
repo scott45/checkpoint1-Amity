@@ -258,15 +258,15 @@ class TestAmityFunctionality(unittest.TestCase):
         get = self.amity.print_unallocated()
         self.assertEqual(get, 'No unallocated people currently.')
 
-    # tests print unallocated if all are allocated
-    def test_print_unallocated_if_exisiting(self):
-        self.amity.create_room('o', 'Witherspoon')
-        res = self.amity.validate_person('Lyon', 'Witherspoon', 'Staff', 'n')
-        person = self.amity.generate_identifier(res)
+    # tests print unallocated
+    def test_print_unallocated(self):
+        self.amity.create_room('o', 'london')
+        prints = self.amity.validate_person('brado', 'media', 'Staff', 'n')
+        person = self.amity.generate_qualifier(prints)
         self.amity.allocate_room(person)
         self.amity.unallocated_persons.append('Person Name')
-        res = self.amity.print_unallocated()
-        self.assertTrue(res, 'Some people unallocated.')
+        get = self.amity.print_unallocated()
+        self.assertTrue(get, 'Some people unallocated.')
 
     def test_save_state(self):
         self.amity.create_room('o', 'Witherspoon')
