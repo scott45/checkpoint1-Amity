@@ -141,7 +141,7 @@ class TestAmityFunctionality(unittest.TestCase):
                 self.assertEqual(person.person_type, 'Fellow')
                 self.assertEqual(person.identifier, 'F1')
 
-        prints= self.amity.validate_person('taracha', 'rogers', 'Staff', 'n')
+        prints = self.amity.validate_person('taracha', 'rogers', 'Staff', 'n')
         person = self.amity.generate_identifier(prints)
         for person in self.amity.people:
             if person.full_name == 'taracha rogers':
@@ -274,13 +274,21 @@ class TestAmityFunctionality(unittest.TestCase):
         respond = self.amity.validate_person('mahad', 'kironde', 'Staff', 'n')
         person = self.amity.generate_qualifier(respond)
         self.amity.allocate_room(person)
-        self.assertFalse(os.path.exists('default_db_self.amity.sqlite'))
+        self.assertFalse(os.path.exists('this_database_self.amity.sqlite'))
 
     # tests save state successful
-    def test_save_state_works(self):
+    def test_save_state_functional(self):
         self.amity.create_room('o', 'roysambu')
         respond = self.amity.validate_person('mahad', 'kironde', 'Staff', 'n')
         person = self.amity.generate_identifier(respond)
         self.amity.allocate_room(person)
         yah = self.amity.save_state()
         self.assertEqual(yah, True)
+
+    # test load db
+    def test_load_db(self):
+        self.amity.create_room('l', 'gwe')
+        self.amity.create_room('o', 'wewe')
+        self.amity.save_state()
+        response = self.amity.load_state('amity_db.sqlite')
+        self.assertEqual(response, 'db load successful')
