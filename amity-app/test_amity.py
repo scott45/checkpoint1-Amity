@@ -238,13 +238,13 @@ class TestAmityFunctionality(unittest.TestCase):
         self.assertEqual(yoh, 'that Person ID does not exist.')
 
     def test_print_room_if_no_rooms(self):
-        res = self.amity.print_room('Jupite')
-        self.assertEqual(res, 'No rooms exist at the moment.')
+        show = self.amity.print_room('dakar')
+        self.assertEqual(show, 'No rooms have been created yet.')
 
     def test_if_room_exists(self):
-        self.amity.create_room('o', 'jupite')
-        res = self.amity.print_room('SOHK')
-        self.assertEqual(res, 'Room does not exist.')
+        self.amity.create_room('o', 'congo')
+        show = self.amity.print_room('japan')
+        self.assertEqual(show, 'that room does not exist.')
 
     def test_print_unallocated_if_all_allocated(self):
         self.amity.create_room('o', 'lyon')
