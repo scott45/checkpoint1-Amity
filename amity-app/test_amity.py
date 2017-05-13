@@ -198,36 +198,36 @@ class TestAmityFunctionality(unittest.TestCase):
     # tests that reallocation to the same room raises an error
     def test_reallocate_to_similar_room(self):
         self.amity.create_room('o', 'tsavo3')
-        res = self.amity.validate_person('dominic', 'motuka', 'Fellow', 'n')
-        person = self.amity.generate_identifier(res)
+        prints = self.amity.validate_person('dominic', 'motuka', 'Fellow', 'n')
+        person = self.amity.generate_identifier(prints)
         self.amity.allocate_room(person)
-        res = self.amity.reallocate_person('F1', 'tsavo3')
-        self.assertEqual(res, 'reallocation to same room not possible')
+        gets = self.amity.reallocate_person('F1', 'tsavo3')
+        self.assertEqual(gets, 'reallocation to same room not possible')
 
     # tests that reallocation to the same room raises an error if id doesnt exist
     def test_reallocate_to_similar_room_with_fake_id(self):
         self.amity.create_room('o', 'tsavo5')
         self.amity.create_room('o', 'krypton2')
-        res = self.amity.validate_person('opondo', 'oscar', 'Fellow', 'n')
-        person = self.amity.generate_qualifier(res)
+        gets = self.amity.validate_person('opondo', 'oscar', 'Fellow', 'n')
+        person = self.amity.generate_qualifier(gets)
         self.amity.allocate_room(person)
-        res = self.amity.reallocate_person('FELLOW.1', 'Mars')
-        self.assertEqual(res, 'Invalid person id, its unknown')
+        prints = self.amity.reallocate_person('FELLOW.1', 'Mars')
+        self.assertEqual(prints, 'Invalid person id, its unknown')
 
-    def test_reallocate_person_works(self):
-        self.amity.create_room('o', 'valhalla')
-        res = self.amity.validate_person(
-            'seralynnette', 'wanjiku', 'Staff', 'n')
-        person = self.amity.generate_identifier(res)
+    # tests that reallocation process is successful
+    def test_reallocate_person(self):
+        self.amity.create_room('o', 'pink')
+        prints = self.amity.validate_person('baby', 'wange', 'Staff', 'n')
+        person = self.amity.generate_qualifier(prints)
         self.amity.allocate_room(person)
-        self.amity.create_room('o', 'narnia')
-        res = self.amity.reallocate_person('S1', 'narnia')
-        self.assertEqual(res, 'Person reallocated to Narnia')
+        self.amity.create_room('o', 'red')
+        prints = self.amity.reallocate_person('S1', 'red')
+        self.assertEqual(prints, 'reallocated to red')
         for room in self.amity.rooms:
-            if room.room_name == 'Valhalla':
-                self.assertNotIn('Seralynnette Wanjiku', room.occupants)
-            if room.room_name == 'Narnia':
-                self.assertIn('Seralynnette Wanjiku', room.occupants)
+            if room.room_name == 'pink':
+                self.assertNotIn('baby wange', room.occupants)
+            if room.room_name == 'red':
+                self.assertIn('baby wange', room.occupants)
 
     def test_reallocate_unallocated(self):
         self.amity.create_room('o', 'prayar')
