@@ -201,3 +201,79 @@ class Amity(object):
                     (person.person_type, person.full_name),
                     fg='green', bold=True)
         return person
+
+    # allocating a room
+    def allocate_room(self, person):
+        click.secho('ALLOCATING ROOM ...', fg='cyan')
+        time.sleep(1)
+        if person.person_type == 'Staff':
+            staff_single_allocation = {}
+            staff_single_allocation[person.full_name] = self.offices['available'][
+                randint(0, (len(self.offices['available']) - 1))]
+            self.staff_allocations.append(staff_single_allocation)
+            for room in self.rooms:
+                if room.room_name == staff_single_allocation[person.full_name]:
+                    if room.capacity > 0:
+                        click.secho('Success!', fg='green')
+                        room.capacity = room.add_person(person.full_name)
+                    else:
+                        self.offices['available'].remove(room.room_name)
+                        self.offices['unavailable'].append(room.room_name)
+                        self.unallocated_persons.append(person.full_name)
+                        msg = '%s has reached its Maximum capacity.' % room.room_name
+                        msg += 'Please add another %s.' % room.room_type
+                        click.secho(msg, fg='red', bold=True)
+
+        if person.person_type == 'Fellow':
+            if person.accomodate == 'Y':
+                fellow_single_allocation = {}
+                fellow_single_allocation['name'] = person.full_name
+                fellow_single_allocation['office'] = self.offices['available'][
+                    randint(0, (len(self.offices['available']) - 1))]
+                fellow_single_allocation['living_space'] = self.living_spaces['available'][
+                    randint(0, (len(self.living_spaces['available']) - 1))]
+                self.fellow_allocations.append(fellow_single_allocation)
+                for room in self.rooms:
+                    if room.room_name == fellow_single_allocation['office']:
+                        if room.capacity > 0:
+                            room.capacity = room.add_person(person.full_name)
+                        else:
+                            self.offices['available'].remove(room.room_name)
+                            self.offices['unavailable'].append(room.room_name)
+                            self.unallocated_persons.append(person.full_name)
+                            msg = '%s has reached its Maximum capacity.' % room.room_name
+                            msg += 'Please add another %s.' % room.room_type
+                            click.secho(msg, fg='red', bold=True)
+                    elif room.room_name == fellow_single_allocation['living_space']:
+                        if room.capacity > 0:
+                            room.capacity = room.add_person(person.full_name)
+                        else:
+                            self.living_spaces[
+                                'available'].remove(room.room_name)
+                            self.living_spaces[
+                                'unavailable'].append(room.room_name)
+                            self.unallocated_persons.append(person.full_name)
+                            msg = '%s has reached its Maximum capacity.' % room.room_name
+                            msg += 'Please add another %s.' % room.room_type
+                            click.secho(msg, fg='red', bold=True)
+                click.secho('Success!', fg='green')
+                return 'Fellow allocated both living space and office'
+            else:
+                fellow_single_allocation = {}
+                fellow_single_allocation[person.full_name] = \
+                    self.offices['available'][
+                    randint(0, (len(self.offices['available']) - 1))]
+                self.fellow_allocations.append(fellow_single_allocation)
+                for room in self.rooms:
+                    if room.room_name == \
+                            fellow_single_allocation[person.full_name]:
+                        if room.capacity > 0:
+                            click.secho('Success!', fg='green')
+                            room.capacity = room.add_person(person.full_name)
+                        else:
+                            self.offices['available'].remove(room.room_name)
+                            self.offices['unavailable'].append(room.room_name)
+                            self.unallocated_persons.append(person.full_name)
+                            msg = '%s has reached its Maximum capacity.' % room.room_name
+                            msg += 'Please add another %s.' % room.room_type
+                            click.secho(msg, fg='red', bold=True)
