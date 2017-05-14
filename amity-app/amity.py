@@ -151,3 +151,53 @@ class Amity(object):
                 click.secho(output, fg='red', bold=True)
                 return 'No office for fellow to be allocated into.'
         return [all_names, accommodate, person_label]
+
+    # function for generating a persons own identifier
+    def generate_qualifier(self, validated_details):
+        all_names = validated_details[0]
+        accommodate = validated_details[1]
+        person_label = validated_details[2]
+        full_names = all_names.split()
+        if not self.people:
+            if person_label.title() == 'Fellow':
+                f_id = 1
+                self.f_ids.append(f_id)
+                identifier = 'F' + str(f_id)
+                person = Fellow(full_names[0], full_names[1])
+                person.accommodate = accommodate
+                person.get_full_name()
+                person.assign_identifier(identifier)
+                self.fellows.append(person.full_name)
+            elif person_label.title() == 'Staff':
+                s_id = 1
+                self.s_ids.append(s_id)
+                identifier = 'S' + str(s_id)
+                person = Staff(full_names[0], full_names[1])
+                person.accommodate = accommodate
+                person.get_full_name()
+                person.assign_identifier(identifier)
+                self.staff.append(person.full_name)
+        else:
+            if person_label.title() == 'Fellow':
+                person = Fellow(full_names[0], full_names[1])
+                person.accommodate = accommodate
+                person.get_full_name()
+                f_id = self.f_ids.pop() + 1
+                identifier = 'F' + str(f_id)
+                self.f_ids.append(f_id)
+                person.assign_identifier(identifier)
+                self.fellows.append(person.full_name)
+            elif person_label.title() == 'Staff':
+                person = Staff(full_names[0], full_names[1])
+                person.accommodate = accommodate
+                person.get_full_name()
+                s_id = self.s_ids.pop() + 1
+                identifier = 'S' + str(s_id)
+                self.s_ids.append(s_id)
+                person.assign_identifier(identifier)
+                self.fellows.append(person.full_name)
+        self.people.append(person)
+        click.secho('The %s %s has been created.\n' %
+                    (person.person_type, person.full_name),
+                    fg='green', bold=True)
+        return person
