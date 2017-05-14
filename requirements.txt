@@ -1,3 +1,6 @@
+colorama
+termcolor
+pyfiglet
 appdirs==1.4.3
 click==6.7
 mock==2.0.0
