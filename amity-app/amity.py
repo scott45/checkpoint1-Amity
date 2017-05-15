@@ -430,3 +430,136 @@ class Amity(object):
                     file.write(unallocated)
                     file.write('\n')
                 click.secho('List stored in %s.txt' % filename, fg='cyan')
+
+    # test save state functionality
+    def save_state(self, db_name=None):
+        if os.path.exists('amity_db.sqlite'):
+            os.remove('amity_db.sqlite')
+        if db_name is None:
+            db = DatabaseManager()
+        else:
+            db = DatabaseManager(db_name)
+        # db = DatabaseManager()
+        Base.metadata.bind = db.engine
+        s = db.session()
+        # import ipdb; ipdb.set_trace()
+        try:
+            for person in self.people:
+                for room in self.rooms:
+                    if person.all_names in room.occupants:
+                        if room.room_label == 'Office':
+                            office_allocated = room.room_name
+                        if room.room_label == 'Living Space' and \
+                                person.accommodate == 'Y':
+                            ls_allocated = room.room_name
+                        else:
+                            ls_allocated = None
+                    if person.all_names in self.unallocated_persons:
+                        ls_allocated = 'Unallocated'
+                        office_allocated = 'Unallocated'
+                saved_data = People(
+                    person_qualifier=person.qualifier,
+                    person_name=person.all_names,
+                    person_label=person.person_label,
+                    wants_accomodation=person.accommodate,
+                    office_allocated=office_allocated,
+                    living_space_allocated=ls_allocated
+                )
+                s.merge(saved_data)
+
+            for room in self.rooms:
+                room_to_db = Rooms(
+                    room_name=room.room_name,
+                    room_type=room.room_label,
+                    room_capacity=room.capacity,
+                )
+                s.merge(room_to_db)
+            s.commit()
+            output = "Data has been added to {} database successfully".\
+                format(db.db_name.upper())
+            click.secho(output, fg='cyan', bold=True)
+            return True
+        except Exception as e:
+            print(e)
+            return "There was an error in the process of adding people to the database."
+
+    def load_state(self, db_name):
+        '''
+        This function queries from the database and contiues the
+        seesion from that point as expected.
+
+        '''
+        engine = create_engine('sqlite:///' + db_name + '.sqlite')
+        Session = sessionmaker()
+        Session.configure(bind=engine)
+        session = Session()
+        all_people = session.query(People).all()
+        all_rooms = session.query(Rooms).all()
+        for r in all_rooms:
+            if r.room_type == 'Office':
+                room = Office(r.room_name)
+                if r.room_capacity > 0:
+                    self.offices['available'].append(r.room_name)
+                else:
+                    self.offices['unavailable'].append(r.room_name)
+            if r.room_type == 'Living Space':
+                room = LivingSpace(r.room_name)
+                if r.room_capacity > 0:
+                    self.living_spaces['available'].append(r.room_name)
+                else:
+                    self.living_spaces['unavailable'].append(r.room_name)
+            self.rooms.append(room)
+        for p in all_people:
+            if not self.people:
+                if p.person_type == 'Fellow':
+                    full_name = p.person_name.split()
+                    person = Fellow(full_name[0], full_name[1])
+                    f_id = 1
+                    self.f_ids.append(f_id)
+                    identifier = 'F' + str(f_id)
+                    person.identifier = identifier
+                    person.accomodate = p.wants_accomodation
+                    person.get_full_name()
+                    self.fellows.append(person.full_name)
+                elif p.person_type == 'Staff':
+                    full_name = p.person_name.split()
+                    person = Staff(full_name[0], full_name[1])
+                    s_id = 1
+                    self.s_ids.append(s_id)
+                    identifier = 'S' + str(s_id)
+                    person.identifier = identifier
+                    person.accomodate = p.wants_accomodation
+                    person.get_full_name()
+                    self.staff.append(person.full_name)
+            else:
+                if p.person_type == 'Fellow':
+                    full_name = p.person_name.split()
+                    person = Fellow(full_name[0], full_name[1])
+                    f_id = self.f_ids.pop() + 1
+                    identifier = 'F' + str(f_id)
+                    self.f_ids.append(f_id)
+                    person.accomodate = p.wants_accomodation
+                    person.identifier = identifier
+                    person.get_full_name()
+                    self.fellows.append(person.full_name)
+                elif p.person_type == 'Staff':
+                    full_name = p.person_name.split()
+                    person = Staff(full_name[0], full_name[1])
+                    s_id = self.s_ids.pop() + 1
+                    identifier = 'S' + str(s_id)
+                    person.identifier = identifier
+                    self.s_ids.append(s_id)
+                    person.accomodate = p.wants_accomodation
+                    person.get_full_name()
+                    self.fellows.append(person.full_name)
+            self.people.append(person)
+            # Append person object to people list.
+            for room in self.rooms:
+                if p.living_space_allocated == room.room_name:
+                    room.add_person(p.person_name)
+                if p.office_allocated == room.room_name:
+                    room.add_person(p.person_name)
+            if p.office_allocated == 'Unallocated':
+                self.unallocated_persons.append(p.person_name)
+        return 'Database Loaded.'
+
