@@ -23,10 +23,10 @@ class TestAmityFunctionality(unittest.TestCase):
     # tests the string input is correct
     def test_returns_error_when_non_string_submitted(self):
         self.assertEqual(self.amity.create_room(
-            0, 2), 'ValueError. Invalid input',
+            0, 2), 'Input-Error. Invalid room type input.',
             msg='Inputs must be of string type')
         self.assertEqual(self.amity.create_room('G', 'Glow'),
-                         'Error. Invalid room type input.',
+                         'Input-Error. Invalid room type input.',
                          msg='Input O or L for room type.')
 
     # tests that a room is successfully created
@@ -137,20 +137,20 @@ class TestAmityFunctionality(unittest.TestCase):
         prints = self.amity.validate_person('kitui', 'daniel', 'Fellow', 'y')
         person = self.amity.generate_qualifier(prints)
         for person in self.amity.people:
-            if person.full_name == 'kitui daniel':
-                self.assertEqual(person.person_type, 'Fellow')
+            if person.all_names == 'kitui daniel':
+                self.assertEqual(person.person_label, 'Fellow')
                 self.assertEqual(person.identifier, 'F1')
 
         prints = self.amity.validate_person('taracha', 'rogers', 'Staff', 'n')
         person = self.amity.generate_identifier(prints)
         for person in self.amity.people:
-            if person.full_name == 'taracha rogers':
-                self.assertEqual(person.person_type, 'Staff')
+            if person.all_names == 'taracha rogers':
+                self.assertEqual(person.person_label, 'Staff')
                 self.assertEqual(person.identifier, 'S1')
 
     # tests qualifier error is generated if no people
     def test_get_qualifier_if_no_people_created(self):
-        self.assertEqual(self.amity.get_qualifier(
+        self.assertEqual(self.amity.assign_qualifier(
             'scott', 'businge'), 'you havent created people yet')
 
     # tests qualifier is generated if people are added
@@ -183,7 +183,7 @@ class TestAmityFunctionality(unittest.TestCase):
         self.assertEqual(respond, "unknown room name.")
 
     # tests reallocation without desiring accommodation
-    def test_reallocate_person_when_person_accomodate_is_N(self):
+    def test_reallocate_person_when_person_accommodate_is_N(self):
         self.amity.create_room('o', 'tsavo2')
         self.amity.create_room('l', 'swift')
         prints = self.amity.validate_person('victoria', 'Auka', 'Fellow', 'n')
