@@ -47,7 +47,7 @@ class Amity(object):
             room_type = 'Living Space'
         for room in self.rooms:
             if room.room_name == room_name and \
-                    room.room_type == room_type:
+                            room.room_type == room_type:
                 click.secho('%s %s already exists, choose another name'
                             % (room_type, room_name),
                             fg='white', bold=True)
@@ -124,7 +124,7 @@ class Amity(object):
         all_names = first_name.title() + ' ' + other_name.title()
         for person in self.people:
             if person.all_names == all_names and \
-                    person.person_label == person_label.title():
+                            person.person_label == person_label.title():
                 click.secho('%s %s Already Exists.' % (person_label, all_names))
                 return 'This Person exists.'
         if not self.offices['available'] and person_label == 'Staff':
@@ -274,18 +274,46 @@ class Amity(object):
 
     # get qualifier for reallocation to enable operation
     def get_qualifier(self, first_name, last_name):
-            if not self.people:
-                click.secho('No people in the system.')
-                return 'No people have been added yet'
+        if not self.people:
+            click.secho('No people in the system.')
+            return 'No people have been added yet'
+        else:
+            fn = first_name.title() + ' ' + last_name.title()
+            for person in self.people:
+                if person.all_names_name == fn:
+                    output = click.secho(person.qualifier, fg='green')
+                    return person.qualifier
             else:
-                fn = first_name.title() + ' ' + last_name.title()
-                for person in self.people:
-                    if person.all_names_name == fn:
-                        output = click.secho(person.qualifier, fg='green')
-                        return person.qualifier
+                output = click.secho('The person does not exist.', fg='white')
+                return output
+
+    # method that prints a room
+    def print_room(self, room_name):
+        if not self.rooms:
+            click.secho('No rooms have been created yet.',
+                        fg='white', bold=True)
+            return 'No rooms exist currently.'
+        all_rooms = []
+        for room in self.rooms:
+            all_rooms.append(room.room_name)
+        if room_name.title() not in all_rooms:
+            click.secho('The room name %s does not exist in the database.' %
+                        room_name, fg='white', bold=True)
+            return 'Room does not exist in the system.'
+
+        room_name = room_name.title()
+        for room in self.rooms:
+            if room.room_name == room_name:
+                click.secho('ROOM NAME:%s(%s)' %
+                            (room_name, room.room_type),
+                            fg='green', bold=True)
+                click.secho('=' * 10, fg='white')
+                if room.occupants:
+                    for occupant in room.occupants:
+                        click.secho(occupant, fg='cyan')
                 else:
-                    output = click.secho('The person does not exist.', fg='white')
-                    return output
+                    click.secho('No body has been allocated in here.', fg='cyan', bold=True)
+                    return False
 
     # function to implement reallocation process
     def reallocate_person(self, person_id, room_name):
@@ -328,7 +356,7 @@ class Amity(object):
                 desired = person.all_names
         for room in self.rooms:
             if desired in room.occupants and \
-                    room.room_name == room_name:
+                            room.room_name == room_name:
                 click.secho('You cannot be reallocated to the same room you were given at first.',
                             fg='red', bold=True)
                 return 'Cant reallocate a person to same room'
@@ -348,4 +376,35 @@ class Amity(object):
                             fg='green', bold=True)
                 return 'Person moved to %s' % room_name
 
+    # Reallocate someone who is in the unallocated section
+    def reallocate_unallocated(self, person_id, room_name):
+        available_rooms = []
+        if type(room_name) != str:
+            return 'Error. Enter valid room name of string type.'
+        room_name = room_name.title()
+        person_id = person_id.upper()
+        people_ids = []
+        for person in self.people:
+            people_ids.append(person.qualifier)
+        if person_id not in people_ids:
+            click.secho('Person ID does not exist', fg='white', bold=True)
+            return 'Person ID entered does not exist.'
 
+        for room in self.offices['available']:
+            available_rooms.append(room)
+        for room in self.living_spaces['available']:
+            available_rooms.append(room)
+        if room_name.title() not in available_rooms:
+            click.secho('Room name %s does not exist in the allocations ready room.' %
+                        room_name, fg='white', bold=True)
+            return 'Room does not exist in the list.'
+        for person in self.people:
+            if person.full_name in self.unallocated_persons and \
+                            person.qualifier == person_id:
+                unallocated_person = person.all_names
+        for room in self.rooms:
+            if room.room_name == room_name:
+                room.occupants.append(unallocated_person)
+                self.unallocated_persons.remove(unallocated_person)
+                click.secho('%s moved to %s' % (
+                    unallocated_person, room_name), fg='green', bold=True)
