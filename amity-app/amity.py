@@ -408,3 +408,25 @@ class Amity(object):
                 self.unallocated_persons.remove(unallocated_person)
                 click.secho('%s moved to %s' % (
                     unallocated_person, room_name), fg='green', bold=True)
+
+    # people who havent been allocated rooms
+    def print_unallocated(self, filename=None):
+        if not self.unallocated_persons:
+            click.secho('Everyone is allocated a room currently.',
+                        fg='white', bold=True)
+            return 'No unallocated person.'
+        else:
+            if filename is None:
+                click.secho('Unallocated people in the system.',
+                            fg='green', bold=True)
+                for unallocated in self.unallocated_persons:
+                    click.secho(unallocated, fg='white')
+                    return 'Some people are unallocated.'
+            else:
+                file = open(filename + '.txt', 'w')
+                file.write("Unallocated people in the system.")
+                file.write('\n')
+                for unallocated in self.unallocated_persons:
+                    file.write(unallocated)
+                    file.write('\n')
+                click.secho('List stored in %s.txt' % filename, fg='cyan')
