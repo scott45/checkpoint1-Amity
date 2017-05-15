@@ -123,7 +123,7 @@ class Amity(object):
                 fg='white', bold=True)
         all_names = first_name.title() + ' ' + other_name.title()
         for person in self.people:
-            if person.full_name == all_names and \
+            if person.all_names == all_names and \
                     person.person_label == person_label.title():
                 click.secho('%s %s Already Exists.' % (person_label, all_names))
                 return 'This Person exists.'
@@ -157,77 +157,76 @@ class Amity(object):
         all_names = validated_details[0]
         accommodate = validated_details[1]
         person_label = validated_details[2]
-        full_names = all_names.split()
+        all_namess = all_names.split()
         if not self.people:
             if person_label.title() == 'Fellow':
                 f_id = 1
                 self.f_ids.append(f_id)
                 identifier = 'F' + str(f_id)
-                person = Fellow(full_names[0], full_names[1])
+                person = Fellow(all_namess[0], all_namess[1])
                 person.accommodate = accommodate
-                person.get_full_name()
-                person.assign_identifier(identifier)
-                self.fellows.append(person.full_name)
+                person.get_all_names()
+                person.assign_qualifier(identifier)
+                self.fellows.append(person.all_names)
             elif person_label.title() == 'Staff':
                 s_id = 1
                 self.s_ids.append(s_id)
                 identifier = 'S' + str(s_id)
-                person = Staff(full_names[0], full_names[1])
+                person = Staff(all_namess[0], all_namess[1])
                 person.accommodate = accommodate
-                person.get_full_name()
-                person.assign_identifier(identifier)
-                self.staff.append(person.full_name)
+                person.get_all_names()
+                person.assign_qualifier(identifier)
+                self.staff.append(person.all_names)
         else:
             if person_label.title() == 'Fellow':
-                person = Fellow(full_names[0], full_names[1])
+                person = Fellow(all_namess[0], all_namess[1])
                 person.accommodate = accommodate
-                person.get_full_name()
+                person.get_all_names()
                 f_id = self.f_ids.pop() + 1
                 identifier = 'F' + str(f_id)
                 self.f_ids.append(f_id)
-                person.assign_identifier(identifier)
-                self.fellows.append(person.full_name)
+                person.assign_qualifier(identifier)
+                self.fellows.append(person.all_names)
             elif person_label.title() == 'Staff':
-                person = Staff(full_names[0], full_names[1])
+                person = Staff(all_namess[0], all_namess[1])
                 person.accommodate = accommodate
-                person.get_full_name()
+                person.get_all_names()
                 s_id = self.s_ids.pop() + 1
                 identifier = 'S' + str(s_id)
                 self.s_ids.append(s_id)
-                person.assign_identifier(identifier)
-                self.fellows.append(person.full_name)
+                person.assign_qualifier(identifier)
+                self.fellows.append(person.all_names)
         self.people.append(person)
         click.secho('The %s %s has been created.\n' %
-                    (person.person_type, person.full_name),
+                    (person.person_label, person.all_names),
                     fg='green', bold=True)
         return person
 
     # allocating a room
     def allocate_room(self, person):
-        click.secho('ALLOCATING ROOM ...', fg='cyan')
-        time.sleep(1)
-        if person.person_type == 'Staff':
-            staff_single_allocation = {}
-            staff_single_allocation[person.full_name] = self.offices['available'][
-                randint(0, (len(self.offices['available']) - 1))]
+        click.secho('room allocation in progress....', fg='cyan')
+        time.sleep(2)
+        if person.person_label == 'Staff':
+            staff_single_allocation = {person.all_names: self.offices['available'][
+                randint(0, (len(self.offices['available']) - 1))]}
             self.staff_allocations.append(staff_single_allocation)
             for room in self.rooms:
-                if room.room_name == staff_single_allocation[person.full_name]:
+                if room.room_name == staff_single_allocation[person.all_names]:
                     if room.capacity > 0:
                         click.secho('Success!', fg='green')
-                        room.capacity = room.add_person(person.full_name)
+                        room.capacity = room.add_person(person.all_names)
                     else:
                         self.offices['available'].remove(room.room_name)
                         self.offices['unavailable'].append(room.room_name)
-                        self.unallocated_persons.append(person.full_name)
+                        self.unallocated_persons.append(person.all_names)
                         msg = '%s has reached its Maximum capacity.' % room.room_name
                         msg += 'Please add another %s.' % room.room_type
                         click.secho(msg, fg='red', bold=True)
 
-        if person.person_type == 'Fellow':
-            if person.accomodate == 'Y':
+        if person.person_label == 'Fellow':
+            if person.accommodate == 'Y':
                 fellow_single_allocation = {}
-                fellow_single_allocation['name'] = person.full_name
+                fellow_single_allocation['name'] = person.all_names
                 fellow_single_allocation['office'] = self.offices['available'][
                     randint(0, (len(self.offices['available']) - 1))]
                 fellow_single_allocation['living_space'] = self.living_spaces['available'][
@@ -236,23 +235,23 @@ class Amity(object):
                 for room in self.rooms:
                     if room.room_name == fellow_single_allocation['office']:
                         if room.capacity > 0:
-                            room.capacity = room.add_person(person.full_name)
+                            room.capacity = room.add_person(person.all_names)
                         else:
                             self.offices['available'].remove(room.room_name)
                             self.offices['unavailable'].append(room.room_name)
-                            self.unallocated_persons.append(person.full_name)
+                            self.unallocated_persons.append(person.all_names)
                             msg = '%s has reached its Maximum capacity.' % room.room_name
                             msg += 'Please add another %s.' % room.room_type
                             click.secho(msg, fg='red', bold=True)
                     elif room.room_name == fellow_single_allocation['living_space']:
                         if room.capacity > 0:
-                            room.capacity = room.add_person(person.full_name)
+                            room.capacity = room.add_person(person.all_names)
                         else:
                             self.living_spaces[
                                 'available'].remove(room.room_name)
                             self.living_spaces[
                                 'unavailable'].append(room.room_name)
-                            self.unallocated_persons.append(person.full_name)
+                            self.unallocated_persons.append(person.all_names)
                             msg = '%s has reached its Maximum capacity.' % room.room_name
                             msg += 'Please add another %s.' % room.room_type
                             click.secho(msg, fg='red', bold=True)
@@ -260,20 +259,20 @@ class Amity(object):
                 return 'Fellow allocated both living space and office'
             else:
                 fellow_single_allocation = {}
-                fellow_single_allocation[person.full_name] = \
+                fellow_single_allocation[person.all_names] = \
                     self.offices['available'][
                     randint(0, (len(self.offices['available']) - 1))]
                 self.fellow_allocations.append(fellow_single_allocation)
                 for room in self.rooms:
                     if room.room_name == \
-                            fellow_single_allocation[person.full_name]:
+                            fellow_single_allocation[person.all_names]:
                         if room.capacity > 0:
                             click.secho('Success!', fg='green')
-                            room.capacity = room.add_person(person.full_name)
+                            room.capacity = room.add_person(person.all_names)
                         else:
                             self.offices['available'].remove(room.room_name)
                             self.offices['unavailable'].append(room.room_name)
-                            self.unallocated_persons.append(person.full_name)
+                            self.unallocated_persons.append(person.all_names)
                             msg = '%s has reached its Maximum capacity.' % room.room_name
                             msg += 'Please add another %s.' % room.room_type
                             click.secho(msg, fg='red', bold=True)
