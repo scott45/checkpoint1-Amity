@@ -280,7 +280,7 @@ class Amity(object):
         else:
             fn = first_name.title() + ' ' + last_name.title()
             for person in self.people:
-                if person.all_names_name == fn:
+                if person.all_names == fn:
                     output = click.secho(person.qualifier, fg='green')
                     return person.qualifier
             else:
@@ -447,9 +447,9 @@ class Amity(object):
             for person in self.people:
                 for room in self.rooms:
                     if person.all_names in room.occupants:
-                        if room.room_label == 'Office':
+                        if room.room_type == 'Office':
                             office_allocated = room.room_name
-                        if room.room_label == 'Living Space' and \
+                        if room.room_type == 'Living Space' and \
                                 person.accommodate == 'Y':
                             ls_allocated = room.room_name
                         else:
@@ -470,29 +470,25 @@ class Amity(object):
             for room in self.rooms:
                 room_to_db = Rooms(
                     room_name=room.room_name,
-                    room_type=room.room_label,
+                    room_type=room.room_type,
                     room_capacity=room.capacity,
                 )
                 s.merge(room_to_db)
             s.commit()
-            output = "Data has been added to {} database successfully".\
+            output = "the Data has successfully been added to {} database".\
                 format(db.db_name.upper())
             click.secho(output, fg='cyan', bold=True)
             return True
         except Exception as e:
             print(e)
-            return "There was an error in the process of adding people to the database."
+            return True
 
+    # load state method
     def load_state(self, db_name):
-        '''
-        This function queries from the database and contiues the
-        seesion from that point as expected.
-
-        '''
         engine = create_engine('sqlite:///' + db_name + '.sqlite')
-        Session = sessionmaker()
-        Session.configure(bind=engine)
-        session = Session()
+        session = sessionmaker()
+        session.configure(bind=engine)
+        session = session()
         all_people = session.query(People).all()
         all_rooms = session.query(Rooms).all()
         for r in all_rooms:
@@ -511,47 +507,47 @@ class Amity(object):
             self.rooms.append(room)
         for p in all_people:
             if not self.people:
-                if p.person_type == 'Fellow':
-                    full_name = p.person_name.split()
-                    person = Fellow(full_name[0], full_name[1])
+                if p.person_label == 'Fellow':
+                    all_names = p.person_name.split()
+                    person = Fellow(all_names[0], all_names[1])
                     f_id = 1
                     self.f_ids.append(f_id)
-                    identifier = 'F' + str(f_id)
-                    person.identifier = identifier
-                    person.accomodate = p.wants_accomodation
-                    person.get_full_name()
-                    self.fellows.append(person.full_name)
-                elif p.person_type == 'Staff':
-                    full_name = p.person_name.split()
-                    person = Staff(full_name[0], full_name[1])
+                    qualifier = 'F' + str(f_id)
+                    person.qualifier = qualifier
+                    person.accommodate = p.accommodate
+                    person.get_all_names()
+                    self.fellows.append(person.all_names)
+                elif p.person_label == 'Staff':
+                    all_names = p.person_name.split()
+                    person = Staff(all_names[0], all_names[1])
                     s_id = 1
                     self.s_ids.append(s_id)
-                    identifier = 'S' + str(s_id)
-                    person.identifier = identifier
-                    person.accomodate = p.wants_accomodation
-                    person.get_full_name()
-                    self.staff.append(person.full_name)
+                    qualifier = 'S' + str(s_id)
+                    person.qualifier = qualifier
+                    person.accommodate = p.accommodate
+                    person.get_all_names()
+                    self.staff.append(person.all_names)
             else:
-                if p.person_type == 'Fellow':
-                    full_name = p.person_name.split()
-                    person = Fellow(full_name[0], full_name[1])
+                if p.person_label == 'Fellow':
+                    all_names = p.person_name.split()
+                    person = Fellow(all_names[0], all_names[1])
                     f_id = self.f_ids.pop() + 1
-                    identifier = 'F' + str(f_id)
+                    qualifier = 'F' + str(f_id)
                     self.f_ids.append(f_id)
-                    person.accomodate = p.wants_accomodation
-                    person.identifier = identifier
-                    person.get_full_name()
-                    self.fellows.append(person.full_name)
-                elif p.person_type == 'Staff':
-                    full_name = p.person_name.split()
-                    person = Staff(full_name[0], full_name[1])
+                    person.accommodate = p.wants_accommodation
+                    person.qualifier = qualifier
+                    person.get_all_names()
+                    self.fellows.append(person.all_names)
+                elif p.person_label == 'Staff':
+                    all_names = p.person_name.split()
+                    person = Staff(all_names[0], all_names[1])
                     s_id = self.s_ids.pop() + 1
-                    identifier = 'S' + str(s_id)
-                    person.identifier = identifier
+                    qualifier = 'S' + str(s_id)
+                    person.identifier = qualifier
                     self.s_ids.append(s_id)
-                    person.accomodate = p.wants_accomodation
-                    person.get_full_name()
-                    self.fellows.append(person.full_name)
+                    person.accommodate = p.wants_accommodation
+                    person.get_all_names()
+                    self.fellows.append(person.all_names)
             self.people.append(person)
             # Append person object to people list.
             for room in self.rooms:
@@ -561,5 +557,5 @@ class Amity(object):
                     room.add_person(p.person_name)
             if p.office_allocated == 'Unallocated':
                 self.unallocated_persons.append(p.person_name)
-        return 'Database Loaded.'
+        return 'Db finished loading!!.'
 
