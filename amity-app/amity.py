@@ -287,14 +287,8 @@ class Amity(object):
                     output = click.secho('The person does not exist.', fg='white')
                     return output
 
+    # function to implement reallocation process
     def reallocate_person(self, person_id, room_name):
-        '''
-        The beginning of the method validates of the data passed
-        is a string and then proceeds to take the person_id and
-        accordingly reallocate them.
-        PERSON_ID which in this case is the identifier
-        is converted to upper case.
-        '''
         available_rooms = []
         if type(room_name) != str:
             return 'Error. Please enter valid room name.'
@@ -305,55 +299,53 @@ class Amity(object):
         person_id = person_id.upper()
         room_name = room_name.title()
         for person in self.people:
-            if person.full_name in self.unallocated_persons and person.identifier == person_id:
-                click.secho('Person is not allocated. Please use --->reallocate unallocated',
-                            fg='yellow', bold=True)
+            if person.all_names in self.unallocated_persons and person.qualifier == person_id:
+                click.secho('person wasnt allocated a room before, use command reallocate unallocated',
+                            fg='white', bold=True)
                 return 'unallocated person.'
         if room_name.title() not in available_rooms:
             click.secho('Room name %s does not exist.' %
-                        room_name, fg='red', bold=True)
+                        room_name, fg='white', bold=True)
             return 'Room does not exist.'
         for person in self.people:
-            if person.accomodate == 'N' and person.identifier == person_id:
+            if person.accommodate == 'N' and person.qualifier == person_id:
                 if room_name in self.living_spaces['available']:
                     click.secho(
-                        'Cant move person from office to living space',
+                        'system cannot move person from office to living space',
                         fg='red', bold=True)
-                    return 'Fellow does not want accomodation'
+                    return 'Fellow does not want to have accommodation here'
         all_person_ids = []
         for person in self.people:
-            all_person_ids.append(person.identifier)
-            if person.identifier == person_id:
-                person_name = person.full_name
+            all_person_ids.append(person.qualifier)
+            if person.qualifier == person_id:
+                person_name = person.all_names
         if person_id not in all_person_ids:
             click.secho('Person ID entered does not exist.',
-                        fg='red', bold=True)
+                        fg='white', bold=True)
             return "Invalid person id."
         for person in self.people:
-            if person.identifier == person_id:
-                wanted_name = person.full_name
+            if person.qualifier == person_id:
+                desired = person.all_names
         for room in self.rooms:
-            if wanted_name in room.occupants and \
+            if desired in room.occupants and \
                     room.room_name == room_name:
-                click.secho('You cannot be reallocated to the same room.',
+                click.secho('You cannot be reallocated to the same room you were given at first.',
                             fg='red', bold=True)
-                return 'cant reallocate to same room'
+                return 'Cant reallocate a person to same room'
         if room_name in self.offices['available']:
-            room_t = 'Office'
+            room_state = 'Office'
         if room_name in self.living_spaces['available']:
-            room_t = 'Living Space'
+            room_state = 'Living Space'
         for room in self.rooms:
-            if person_name in room.occupants and room_t == room.room_type:
-                current_room = room.room_name
+            if person_name in room.occupants and room_state == room.room_type:
+                new_room = room.room_name
                 room.occupants.remove(person_name)
-
-        # Reallocate to actual room
         for room in self.rooms:
             if room.room_name == room_name and room.capacity > 0:
                 room.capacity = room.add_person(person_name)
-                click.secho('%s has been reallocated from %s to %s.' %
-                            (person_name, current_room, room.room_name),
+                click.secho('%s has been moved from %s to %s.' %
+                            (person_name, new_room, room.room_name),
                             fg='green', bold=True)
-                return 'Person reallocated to %s' % room_name
+                return 'Person moved to %s' % room_name
 
 
