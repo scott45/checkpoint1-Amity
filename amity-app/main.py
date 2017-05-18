@@ -4,7 +4,7 @@ __author__ = 'scotty'
 TIA -This is Amity!
 Usage:
     create_room (L|O) <room_name>...
-    add_person <first_name> <last_name> <person_label> [--accommodate=N]
+    add_person <first_name> <last_name> <person_label> [<--accommodate=N>]
     reallocate_person <qualifier> <new_room_name>
     reallocate_unallocated <qualifier> <new_room_name>
     load_people <filename>
@@ -29,16 +29,14 @@ import design
 from amity import Amity
 
 design.app_intro()
-design.intro_header()
-design.exit_bar()
+#design.intro_header()
 amity = Amity()
 
 
-def parse(func):
+def docopt_cmd(func):
     """
-    Essentially a decorator that simplifies the try/except block relays result
+    This decorator is used to simplify the try/except block and pass the result
     of the docopt parsing to the called action.
-    i.e @args_cmd thereafter.
     """
 
     def fn(self, arg):
@@ -46,15 +44,17 @@ def parse(func):
             opt = docopt(fn.__doc__, arg)
 
         except DocoptExit as e:
-            # Throws an Invalid Command message when arguments
-            # do not match what is outlined in the __doc__ string.
-            msg = 'Invalid Command'
-            print(msg)
+            # The DocoptExit is thrown when the args do not match.
+            # We print a message to the user and the usage block.
+
+            print('Invalid Command!')
             print(e)
             return
 
         except SystemExit:
-            # Show help
+            # The SystemExit exception prints the usage for --help
+            # We do not need to do the print here.
+
             return
 
         return func(self, opt)
@@ -66,7 +66,6 @@ def parse(func):
 
 
 def start():
-    design.app_intro()
     design.intro_header()
     arguments = __doc__
     print(arguments)
@@ -75,10 +74,10 @@ def start():
 amity = Amity()
 
 
-class Interactive_Scott(cmd.Cmd):
+class MyInteractive(cmd.Cmd):
     prompt = '(Amity)>> '
 
-    @parse
+    @docopt_cmd
     def do_create_room(self, args):
         """Usage: create_room <room_type> <room_name>...
         """
@@ -89,38 +88,39 @@ class Interactive_Scott(cmd.Cmd):
             msg = 'An error when running this command'
             click.secho(msg, fg='red', bold=True)
 
-    @parse
+    @docopt_cmd
     def do_add_person(self, args):
-        """Usage: add_person <first_name> <other_name> <person_type> [--accomodate=N] """
-        if args['--accommodate'] is None:
-            args['--accommodate'] = 'N'
+        """Usage: add_person <first_name> <other_name> <person_label> [<--accommodate=N>] """
+        if args['<--accommodate=N>'] is None:
+            args['<--accommodate=N>'] = 'N'
         else:
-            args['--accommodate'] = args['--accommodate']
+            args['<--accommodate=N>'] = args['<--accommodate=N>']
 
         try:
             validated_details = amity.validate_person(args['<first_name>'],
                                                       args['<other_name>'],
                                                       args['<person_label>'],
-                                                      args['--accommodate'])
+                                                      args['<--accommodate=N>'])
+
             if type(validated_details) == list:
-                person = amity.generate_identifier(validated_details)
+                person = amity.generate_qualifier(validated_details)
                 amity.allocate_room(person)
         except Exception as e:
             print(e)
             msg = 'An error when running this command'
             click.secho(msg, fg='red', bold=True)
 
-    @parse
+    @docopt_cmd
     def do_reallocate_person(self, args):
         """Usage: reallocate_person <person_id> <room_name>"""
         amity.reallocate_person(args['<person_id>'], args['<room_name>'])
 
-    @parse
+    @docopt_cmd
     def do_print_room(self, args):
         """Usage: print_room <room_name>"""
         amity.print_room(args['<room_name>'])
 
-    @parse
+    @docopt_cmd
     def do_print_allocations(self, args):
         """Usage: print_allocations [--o=filename]"""
         filename = args['--o']
@@ -129,7 +129,7 @@ class Interactive_Scott(cmd.Cmd):
         else:
             amity.print_allocations()
 
-    @parse
+    @docopt_cmd
     def do_print_unallocated(self, args):
         """Usage: print_unallocated [--o=filename]"""
         filename = args['--o']
@@ -138,7 +138,7 @@ class Interactive_Scott(cmd.Cmd):
         else:
             amity.print_unallocated()
 
-    @parse
+    @docopt_cmd
     def do_load_people(self, args):
         """Usage: load_people <filename>"""
 
@@ -180,19 +180,19 @@ class Interactive_Scott(cmd.Cmd):
             click.secho('Please input a valid name of the file.',
                         fg='red', bold=True)
 
-    @parse
+    @docopt_cmd
     def do_get_qualifier(self, args):
-        """ Usage: get_identifier <first_name> <last_name> """
+        """ Usage: get_qualifier <first_name> <last_name> """
         first_name = args['<first_name>']
         last_name = args['<last_name>']
         amity.get_qualifier(first_name, last_name)
 
-    @parse
+    @docopt_cmd
     def do_reallocate_unallocated(self, args):
         """ Usage: reallocate_unallocated <person_id> <room_name> """
         amity.reallocate_unallocated(args['<person_id>'], args['<room_name>'])
 
-    @parse
+    @docopt_cmd
     def do_save_state(self, args):
         """ Usage: save_state [--db=sqlite_database]"""
         db = args['--db']
@@ -201,7 +201,7 @@ class Interactive_Scott(cmd.Cmd):
         else:
             amity.save_state()
 
-    @parse
+    @docopt_cmd
     def do_load_state(self, args):
         """ Usage: save_state <sqlite_database>"""
         try:
@@ -212,16 +212,11 @@ class Interactive_Scott(cmd.Cmd):
             click.secho('Error occurred, please provide valid inputs',
                         fg='red', bold=True)
 
-    @parse
+    @docopt_cmd
     def do_quit(self, args):
         """Usage: quit """
         design.exit_bar()
         exit()
 
 
-if __name__ == '__main__':
-    try:
-        start()
-        Interactive_Scott().cmdloop()
-    except KeyboardInterrupt:
-        design.exit_bar()
+MyInteractive().cmdloop()
