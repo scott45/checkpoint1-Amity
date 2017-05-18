@@ -267,7 +267,7 @@ class Amity(object):
                 return 'Allocated both a living space and an office'
             else:
                 fellow_single_allocation = {}
-                fellow_single_allocation[person.all_name] = \
+                fellow_single_allocation[person.all_names] = \
                     self.offices['available'][
                     randint(0, (len(self.offices['available']) - 1))]
                 self.fellow_allocations.append(fellow_single_allocation)
