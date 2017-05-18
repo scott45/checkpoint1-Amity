@@ -9,10 +9,10 @@ class Person(object):
         self.l_name = l_name.strip().title()
         self.person_label = person_label.strip().title()
         self.accommodate = 'N'
+        self.all_names = self.f_name + ' ' + self.l_name
 
     def get_all_names(self):
-        all_names = self.f_name + ' ' + self.l_name
-        self.all_names = all_names
+        return self.f_name + ' ' + self.l_name
 
     def assign_qualifier(self, qualifier):
         self.qualifier = qualifier
