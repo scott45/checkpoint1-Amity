@@ -98,7 +98,7 @@ class TestAmityFunctionality(unittest.TestCase):
         self.amity.create_room('o', 'camelot')
         res = self.amity.validate_person('mukiibi', 'david', 'tourist', 'y')
         self.assertTrue(res)
-        self.assertEqual(res, 'Invalid Person Type')
+        self.assertEqual(res, 'Invalid Person label')
 
     # tests that accomodation input is either y or n
     def test_wants_accommodation_is_only_y_or_n(self):
