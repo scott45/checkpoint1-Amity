@@ -1,9 +1,10 @@
+from random import randint
+
 __author__ = 'scotty'
 
 import os
 import time
 import click
-from random import randint
 
 from rooms.room import LivingSpace, Office
 from people.person import Fellow, Staff
@@ -26,7 +27,7 @@ class Amity(object):
         self.rooms = []
         self.fellows = []
         self.staff = []
-        self.people = self.staff + self.fellows
+        self.people = []
         self.f_ids = [0]
         self.s_ids = [0]
         self.staff_allocations = []
@@ -37,7 +38,7 @@ class Amity(object):
     def create_room(self, room_type, room_name):
         if type(room_type) != str or room_type.upper() not in ['O', 'L']:
             click.secho('Invalid input, please enter O or L for a room type.',
-                        fg='white', bold=True)
+                        fg='red', bold=True)
             return 'Input-Error. Invalid room type input.'
         room_type = room_type.strip().upper()
         room_name = room_name.strip().title()
@@ -50,7 +51,7 @@ class Amity(object):
                             room.room_type == room_type:
                 click.secho('%s %s already exists, choose another name'
                             % (room_type, room_name),
-                            fg='white', bold=True)
+                            fg='cyan', bold=True)
                 return 'Room already created.'
         if room_type == 'Office':
             room = Office(room_name)
@@ -94,33 +95,33 @@ class Amity(object):
             file = open(filename + '.txt', 'w')
             file.write(output)
             click.secho('Printed to %s.txt' % filename, fg='green')
-            return 'Print to file'
+            return 'Print to screen'
 
     # validates the add person functionality
     def validate_person(self, first_name, other_name, person_label,
                         accommodate='N'):
         if type(first_name) != str or type(other_name) != str:
-            click.secho('Incorrect data type input.', fg='white', bold=True)
+            click.secho('Incorrect data type input.', fg='red', bold=True)
             return 'input-Error, name should be string'
         if not first_name.isalpha() or not other_name.isalpha():
             click.secho('Names must be in alphabetical strings',
-                        fg='white', bold=True)
+                        fg='red', bold=True)
             return 'Non-Alphabetical names added'
         if person_label.title() not in ['Fellow', 'Staff']:
-            click.secho('Please enter either Fellow or Staff for person type',
-                        fg='white', bold=True)
-            return 'Invalid Person Type'
-        if accommodate.upper() not in ['Y', 'N']:
+            click.secho('Please enter either Fellow or Staff for person label',
+                        fg='red', bold=True)
+            return 'Invalid Person label'
+        if accommodate.upper() not in ('Y', 'N'):
             click.secho('Please Enter Y or N for accommodation option.',
-                        fg='white', bold=True)
+                        fg='red', bold=True)
             return 'Input-Error, accommodation option not Y or N'
         accommodate = accommodate.upper()
         person_label = person_label.title()
-        if person_label == 'Staff' and accommodate == 'Y':
+        if person_label.title() == 'Staff' and accommodate == 'Y':
             accommodate = 'N'
             click.secho(
                 'Staff not given accommodation. only an office is allocated.',
-                fg='white', bold=True)
+                fg='red', bold=True)
         all_names = first_name.title() + ' ' + other_name.title()
         for person in self.people:
             if person.all_names == all_names and \
@@ -154,11 +155,12 @@ class Amity(object):
 
     # function for generating a persons own identifier
     def generate_qualifier(self, validated_details):
+        person  = None
         all_names = validated_details[0]
         accommodate = validated_details[1]
         person_label = validated_details[2]
         all_namess = all_names.split()
-        if not self.people:
+        if not person in self.people:
             if person_label.title() == 'Fellow':
                 f_id = 1
                 self.f_ids.append(f_id)
@@ -168,15 +170,20 @@ class Amity(object):
                 person.get_all_names()
                 person.assign_qualifier(identifier)
                 self.fellows.append(person.all_names)
-            elif person_label.title() == 'Staff':
+                self.people.append(person)
+            else:
                 s_id = 1
                 self.s_ids.append(s_id)
                 identifier = 'S' + str(s_id)
-                person = Staff(all_namess[0], all_namess[1])
+                person = Staff(all_namess[0], all_namess[0])
                 person.accommodate = accommodate
                 person.get_all_names()
                 person.assign_qualifier(identifier)
                 self.staff.append(person.all_names)
+                self.people.append(person)
+            click.secho('The %s %s has been created.\n' %
+                    (person.person_label, person.all_names),
+                    fg='green', bold=True)
         else:
             if person_label.title() == 'Fellow':
                 person = Fellow(all_namess[0], all_namess[1])
@@ -187,6 +194,7 @@ class Amity(object):
                 self.f_ids.append(f_id)
                 person.assign_qualifier(identifier)
                 self.fellows.append(person.all_names)
+                self.people.append(person)
             elif person_label.title() == 'Staff':
                 person = Staff(all_namess[0], all_namess[1])
                 person.accommodate = accommodate
@@ -196,24 +204,24 @@ class Amity(object):
                 self.s_ids.append(s_id)
                 person.assign_qualifier(identifier)
                 self.fellows.append(person.all_names)
-        self.people.append(person)
-        click.secho('The %s %s has been created.\n' %
-                    (person.person_label, person.all_names),
-                    fg='green', bold=True)
+                self.people.append(person)
+        #self.people.append(person)
+
         return person
 
     # allocating a room
     def allocate_room(self, person):
         click.secho('room allocation in progress....', fg='green')
-        time.sleep(2)
+        time.sleep(1)
         if person.person_label == 'Staff':
-            staff_single_allocation = {person.all_names: self.offices['available'][
-                randint(0, (len(self.offices['available']) - 1))]}
+            staff_single_allocation = {}
+            staff_single_allocation[person.all_names] = self.offices['available'][
+                randint(0, (len(self.offices['available']) - 1))]
             self.staff_allocations.append(staff_single_allocation)
             for room in self.rooms:
                 if room.room_name == staff_single_allocation[person.all_names]:
                     if room.capacity > 0:
-                        click.secho('Success!', fg='green')
+                        click.secho('Allocation successful!', fg='green')
                         room.capacity = room.add_person(person.all_names)
                     else:
                         self.offices['available'].remove(room.room_name)
@@ -225,9 +233,12 @@ class Amity(object):
 
         if person.person_label == 'Fellow':
             if person.accommodate == 'Y':
-                fellow_single_allocation = {'name': person.all_names, 'office': self.offices['available'][
-                    randint(0, (len(self.offices['available']) - 1))], 'living_space': self.living_spaces['available'][
-                    randint(0, (len(self.living_spaces['available']) - 1))]}
+                fellow_single_allocation = {}
+                fellow_single_allocation['all_name'] = person.all_names
+                fellow_single_allocation['office'] = self.offices['available'][
+                    randint(0, (len(self.offices['available']) - 1))]
+                fellow_single_allocation['living_space'] = self.living_spaces['available'][
+                    randint(0, (len(self.living_spaces['available']) - 1))]
                 self.fellow_allocations.append(fellow_single_allocation)
                 for room in self.rooms:
                     if room.room_name == fellow_single_allocation['office']:
@@ -255,8 +266,10 @@ class Amity(object):
                 click.secho('Success!', fg='green')
                 return 'Allocated both a living space and an office'
             else:
-                fellow_single_allocation = {person.all_names: self.offices['available'][
-                    randint(0, (len(self.offices['available']) - 1))]}
+                fellow_single_allocation = {}
+                fellow_single_allocation[person.all_name] = \
+                    self.offices['available'][
+                    randint(0, (len(self.offices['available']) - 1))]
                 self.fellow_allocations.append(fellow_single_allocation)
                 for room in self.rooms:
                     if room.room_name == \
@@ -291,7 +304,7 @@ class Amity(object):
     def print_room(self, room_name):
         if not self.rooms:
             click.secho('No rooms have been created yet.',
-                        fg='white', bold=True)
+                        fg='cyan', bold=True)
             return 'No rooms exist currently.'
         all_rooms = []
         for room in self.rooms:
@@ -413,7 +426,7 @@ class Amity(object):
     def print_unallocated(self, filename=None):
         if not self.unallocated_persons:
             click.secho('Everyone is allocated a room currently.',
-                        fg='white', bold=True)
+                        fg='cyan', bold=True)
             return 'No unallocated person.'
         else:
             if filename is None:
@@ -450,7 +463,7 @@ class Amity(object):
                         if room.room_type == 'Office':
                             office_allocated = room.room_name
                         if room.room_type == 'Living Space' and \
-                                person.accommodate == 'Y':
+                                        person.accommodate == 'Y':
                             ls_allocated = room.room_name
                         else:
                             ls_allocated = None
@@ -475,7 +488,7 @@ class Amity(object):
                 )
                 s.merge(room_to_db)
             s.commit()
-            output = "the Data has successfully been added to {} database".\
+            output = "the Data has successfully been added to {} database". \
                 format(db.db_name.upper())
             click.secho(output, fg='cyan', bold=True)
             return True
@@ -558,4 +571,3 @@ class Amity(object):
             if p.office_allocated == 'Unallocated':
                 self.unallocated_persons.append(p.person_name)
         return 'Db finished loading!!.'
-
