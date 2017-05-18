@@ -36,6 +36,7 @@ def intro_header():
     intro_msg()
 
 
+
 def exit_bar():
     with click.progressbar(range(1000),
                            label=click.secho(
@@ -44,4 +45,3 @@ def exit_bar():
                            fill_char=click.style('  ', bg='yellow')) as bar:
         for i in bar:
             pass
-
