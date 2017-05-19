@@ -182,6 +182,36 @@ class TestAmityFunctionality(unittest.TestCase):
         respond = self.amity.reallocate_person('S1', 'tent10')
         self.assertEqual(respond, "Room does not exist.")
 
+    # tests print rooms without being created
+    def test_print_room_if_no_rooms(self):
+        show = self.amity.print_room('dakar')
+        self.assertEqual(show, 'No rooms exist currently.')
+
+    # tests that a room exists
+    def test_if_room_exists(self):
+        self.amity.create_room('o', 'congo')
+        show = self.amity.print_room('japan')
+        self.assertEqual(show, 'Room does not exist in the system.')
+
+    # tests print unallocated if all are allocated
+    def test_print_unallocated_if_none(self):
+        self.amity.create_room('o', 'paris')
+        prints = self.amity.validate_person('peter', 'kakoma', 'Staff', 'n')
+        person = self.amity.generate_qualifier(prints)
+        self.amity.allocate_room(person)
+        get = self.amity.print_unallocated()
+        self.assertEqual(get, 'No unallocated person.')
+
+    # tests print unallocated
+    def test_print_unallocated(self):
+        self.amity.create_room('o', 'london')
+        prints = self.amity.validate_person('brado', 'media', 'Staff', 'n')
+        person = self.amity.generate_qualifier(prints)
+        self.amity.allocate_room(person)
+        self.amity.unallocated_persons.append('Person Name')
+        get = self.amity.print_unallocated()
+        self.assertTrue(get, 'Some people unallocated.')
+
     # tests reallocation without desiring accommodation
     def test_reallocate_person_when_person_accommodate_is_N(self):
         self.amity.create_room('o', 'tsavo2')
@@ -238,36 +268,6 @@ class TestAmityFunctionality(unittest.TestCase):
         yoh = self.amity.reallocate_unallocated('s6', 'pro')
         self.assertEqual(yoh, 'Person ID entered does not exist.')
 
-    # tests print rooms without being created
-    def test_print_room_if_no_rooms(self):
-        show = self.amity.print_room('dakar')
-        self.assertEqual(show, 'No rooms exist currently.')
-
-    # tests that a room exists
-    def test_if_room_exists(self):
-        self.amity.create_room('o', 'congo')
-        show = self.amity.print_room('japan')
-        self.assertEqual(show, 'Room does not exist in the system.')
-
-    # tests print unallocated if all are allocated
-    def test_print_unallocated_if_none(self):
-        self.amity.create_room('o', 'paris')
-        prints = self.amity.validate_person('peter', 'kakoma', 'Staff', 'n')
-        person = self.amity.generate_qualifier(prints)
-        self.amity.allocate_room(person)
-        get = self.amity.print_unallocated()
-        self.assertEqual(get, 'No unallocated person.')
-
-    # tests print unallocated
-    def test_print_unallocated(self):
-        self.amity.create_room('o', 'london')
-        prints = self.amity.validate_person('brado', 'media', 'Staff', 'n')
-        person = self.amity.generate_qualifier(prints)
-        self.amity.allocate_room(person)
-        self.amity.unallocated_persons.append('Person Name')
-        get = self.amity.print_unallocated()
-        self.assertTrue(get, 'Some people unallocated.')
-
     # tests save state
     def test_save_state(self):
         self.amity.create_room('o', 'roysambu')
@@ -292,3 +292,6 @@ class TestAmityFunctionality(unittest.TestCase):
         self.amity.save_state()
         response = self.amity.load_state('amity_db')
         self.assertEqual(response, 'Db finished loading!!.')
+
+if __name__ == '__main__':
+    unittest.main()
