@@ -19,8 +19,10 @@ Options:
     -v --version
 """
 
+# one of modules loaded on python startup that enables various operations
 import os
 import click
+# cmd contains a public class called cmd that enabled command line operations (shell)
 import cmd
 from docopt import docopt, DocoptExit
 
