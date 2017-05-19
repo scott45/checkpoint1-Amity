@@ -2,7 +2,6 @@ __author__ = 'scotty'
 
 import os
 
-from amityapp.database.models import DatabaseManager, declarative_base
 import unittest
 from sqlalchemy.ext.declarative import declarative_base
 

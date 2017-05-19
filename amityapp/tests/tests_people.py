@@ -1,7 +1,7 @@
 __author__ = 'scotty'
 
 import unittest
-from person import Staff, Fellow
+from amityapp.people.person import Staff, Fellow
 
 
 class TestPersonClass(unittest.TestCase):
