@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/scott45/checkpoint-1A.svg?branch=master)](https://travis-ci.org/scott45/checkpoint-1A)
 [![Coverage Status](https://coveralls.io/repos/github/scott45/checkpoint-1A/badge.svg?branch=master)](https://coveralls.io/github/scott45/checkpoint-1A?branch=master)
 [![Code Issues](https://www.quantifiedcode.com/api/v1/project/7f1693a69c044c3aae03a2da9b7c8937/badge.svg)](https://www.quantifiedcode.com/app/project/7f1693a69c044c3aae03a2da9b7c8937)
+[![license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)]()
 
 
 >Done in fulfillment of the first checkpoint as a requirement in the Andela fellowship program.
