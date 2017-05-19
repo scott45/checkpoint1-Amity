@@ -474,11 +474,12 @@ class Amity(object):
                     person_qualifier=person.qualifier,
                     person_name=person.all_names,
                     person_label=person.person_label,
-                    wants_accomodation=person.accommodate,
+                    wants_accommodation=person.accommodate,
                     office_allocated=office_allocated,
                     living_space_allocated=ls_allocated
                 )
-                s.merge(saved_data)
+                s.add(saved_data)
+                s.commit()
 
             for room in self.rooms:
                 room_to_db = Rooms(
