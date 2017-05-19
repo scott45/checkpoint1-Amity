@@ -6,9 +6,9 @@ import os
 import time
 import click
 
-from rooms.room import LivingSpace, Office
-from people.person import Fellow, Staff
-from database.models import People, Rooms, DatabaseManager, Base
+from amityapp.rooms.room import LivingSpace, Office
+from amityapp.people.person import Fellow, Staff
+from amityapp.database.models import People, Rooms, DatabaseManager, Base
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
