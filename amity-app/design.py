@@ -1,9 +1,14 @@
 __author__ = 'scotty'
 
 import click
+# sys gives access to other variables used by python interpreters
 import sys
+# colorama, colored terminal text
 from colorama import init
+# termcolor, Color formatting for output in terminal.
+# cprint is a small and simple python library which gives you the possibility to print in color.
 from termcolor import cprint
+# pyfiglet, takes ASCII text and renders it in ASCII art fonts
 from pyfiglet import figlet_format
 
 
