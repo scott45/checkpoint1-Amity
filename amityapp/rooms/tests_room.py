@@ -1,7 +1,7 @@
 __author__ = 'scotty'
 
 import unittest
-from room import LivingSpace, Office
+from amityapp.rooms.room import LivingSpace, Office
 
 
 class TestRoomClassFunctionality(unittest.TestCase):
