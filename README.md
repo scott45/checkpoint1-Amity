@@ -56,9 +56,15 @@ load_state |(sqlite_database)|load_state my_dbname
 
 3. Create a **virtualenv** on your machine and install the dependencies via `pip install -r requirements.txt` and activate it.
 
-4. cd into the **amity-app** folder and run `python main.py`
+4. cd into the **amityapp** folder and run `python main.py`
 
-#5. Tests.
+#5. Usage
+
+The following screencast shows how to run the different commands. Check it out:
+
+[![asciicast](https://asciinema.org/a/641tt6m2ljcn5jun51xyrjpwr.png)](https://asciinema.org/a/641tt6m2ljcn5jun51xyrjpwr)
+
+#6. Tests.
 
 To run nosetests ensure that you are within the *virtual environment* and have the following installed:
 
@@ -76,7 +82,7 @@ After ensuring the above, within the **amity folder** run :
 
 To run tests and view coverage.
 
-#6. IceBox.
+#7. IceBox.
 
 1. Making the CI work online.
 
