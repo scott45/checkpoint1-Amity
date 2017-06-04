@@ -1,6 +1,7 @@
 [![Businge Scott](https://img.shields.io/badge/Businge%20Scott-Checkpoint1-green.svg)]()
 [![Build Status](https://travis-ci.org/scott45/checkpoint-1A.svg?branch=master)](https://travis-ci.org/scott45/checkpoint-1A)
 [![Coverage](https://img.shields.io/badge/coverage-90%25-green.svg)]()
+[![PEP8](https://img.shields.io/badge/code%20style-pep8-orange.svg)](https://www.python.org/dev/peps/pep-0008/)
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)]()
 
 # Amity Room Allocation System.
