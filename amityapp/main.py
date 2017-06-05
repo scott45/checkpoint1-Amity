@@ -1,5 +1,3 @@
-__author__ = 'scotty'
-
 """
 TIA -This is Amity!
 Usage:
@@ -205,7 +203,7 @@ class MyInteractive(cmd.Cmd):
 
     @docopt_cmd
     def do_load_state(self, args):
-        """ Usage: save_state <sqlite_database>"""
+        """ Usage: load_state <sqlite_database>"""
         try:
             amity.load_state(args['<sqlite_database>'])
             click.secho('Database successfully loaded onto the system',
@@ -213,6 +211,20 @@ class MyInteractive(cmd.Cmd):
         except Exception:
             click.secho('Error occurred, please provide valid inputs',
                         fg='red', bold=True)
+
+    @docopt_cmd
+    def do_delete_room(self, args):
+        """Usage: delete_room <room_type> <room_name> """
+        room_type = args["<room_type>"]
+        room_name = args["<room_name>"]
+        amity.delete_room(room_type, room_name)
+
+    @docopt_cmd
+    def do_delete_person(self, args):
+        """Usage: delete_person <first_name> <other_name>"""
+        first_name = args["<first_name>"]
+        other_name = args["<other_name>"]
+        amity.delete_person(first_name, other_name)
 
     @docopt_cmd
     def do_quit(self, args):

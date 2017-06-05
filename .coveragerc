@@ -1,0 +1,15 @@
+[report]
+omit =
+    */site-packages/*
+    */sqlite3/*
+    */__init__.py/*
+    */site-packages/*
+    *decimal.py*
+    *numbers.py*
+    *encodings/ascii.py*
+    *amityapp/__init__.py*
+    *amityapp/database/__init__.py*
+    *amityapp/people/__init__.py*
+    *amityapp/rooms/__init__.py*
+    *amityapp/tests/__init__.py*
+

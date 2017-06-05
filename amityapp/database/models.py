@@ -12,7 +12,7 @@ Base = declarative_base()
 class People(Base):
     __tablename__ = 'people'
     id = Column(Integer, primary_key=True)
-    person_qualifier = Column(String(50), unique=True)
+    person_qualifier = Column(String(50))
     person_name = Column(String(80))
     person_label = Column(String(25))
     wants_accommodation = Column(String(5))

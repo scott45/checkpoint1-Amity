@@ -10,6 +10,7 @@ class Person(object):
         self.person_label = person_label.strip().title()
         self.accommodate = 'N'
         self.all_names = self.f_name + ' ' + self.l_name
+        self.qualifier = None
 
     def get_all_names(self):
         return self.f_name + ' ' + self.l_name

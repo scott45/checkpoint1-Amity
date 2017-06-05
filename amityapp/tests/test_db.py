@@ -12,7 +12,7 @@ Base = declarative_base()
 # to test that the db is removed before being created.
 # first creates a sample db file and later removes it using the os.path.exits file
 class TestDbPersistence(unittest.TestCase):
-    def test_database_is_removed_if_exists(self):
+    def test_database_exists_and_removed(self):
         db_name = "test_amitydb_exists.db"
         if os.path.exists(db_name):
             os.remove(db_name)
