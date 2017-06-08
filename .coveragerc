@@ -2,6 +2,8 @@
 omit =
     */site-packages/*
     */sqlite3/*
+    */sqlalchemy/*
+    */click/*
     */__init__.py/*
     */site-packages/*
     *decimal.py*
@@ -12,4 +14,13 @@ omit =
     *amityapp/people/__init__.py*
     *amityapp/rooms/__init__.py*
     *amityapp/tests/__init__.py*
-
+    *decimal.py*
+    *encodings/ascii.py*
+    *numbers.py*
+    *sqlite3/__init__.py *
+    *sqlite3/dbapi2.py*
+    *click/__init__.py*
+    *click/_compat.py*
+    *click/_unicodefun.py*
+    *click/core.py*
+    *click/decorators.py*

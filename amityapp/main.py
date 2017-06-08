@@ -27,7 +27,6 @@ from docopt import docopt, DocoptExit
 import design
 
 from amity import Amity
-
 design.app_intro()
 #design.intro_header()
 amity = Amity()
@@ -221,10 +220,9 @@ class MyInteractive(cmd.Cmd):
 
     @docopt_cmd
     def do_delete_person(self, args):
-        """Usage: delete_person <first_name> <other_name>"""
-        first_name = args["<first_name>"]
-        other_name = args["<other_name>"]
-        amity.delete_person(first_name, other_name)
+        """Usage: delete_person <person_qualifier> """
+        person_qualifier = args["<person_qualifier>"]
+        print(amity.delete_person(person_qualifier))
 
     @docopt_cmd
     def do_quit(self, args):

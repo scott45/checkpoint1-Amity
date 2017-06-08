@@ -72,8 +72,6 @@ class Amity(object):
             return 'No rooms have been created yet in the system.'
         output = ''
         for room in self.rooms:
-            # print(room.room_name)
-            # print(room.occupants)
             output += '**' * 5
             output += '\n'
             output += room.room_name + '(' + room.room_type + ')'
@@ -83,7 +81,6 @@ class Amity(object):
             if room.occupants:
                 for occupant in room.occupants:
                     output += occupant + "\n"
-                    # output += '\n'
             else:
                 output += 'No people have been allocated in %s yet.' % room.room_name
                 output += '\n'
@@ -128,35 +125,31 @@ class Amity(object):
                             person.person_label == person_label.title():
                 click.secho('%s %s Already Exists.' % (person_label, all_names))
                 return 'This Person exists.'
-        for person in self.people:
-            if not self.offices['available'] and person_label == 'Staff':
-                self.unallocated_persons.append(person.all_names)
-                click.secho(
-                    'No offices to be allocated into currently.',
-                    fg='red', bold=True)
-                return 'There are no offices created currently.'
-            if not self.living_spaces['available'] and not \
-                    self.offices['available']:
-                self.unallocated_persons.append(person.all_names)
-                click.secho(
-                    'Create room first to add person. Not any room (office or living space)'
-                    ' has been created in the system yet.',
-                    fg='red', bold=True)
-                return 'There are no rooms in the system.'
 
-            if accommodate == 'Y' and person_label == 'Fellow':
-                if not self.living_spaces['available']:
-                    self.unallocated_persons.append(person.all_names)
-                    output = 'Add a living space for this fellow '
-                    output += 'to be allocated both.'
-                    click.secho(output, fg='red', bold=True)
-                    return 'No Living space for fellow to be allocated into.'
-                elif not self.offices['available']:
-                    self.unallocated_persons.append(person.all_names)
-                    output = 'Add an office for this fellow '
-                    output += 'to be allocated both .'
-                    click.secho(output, fg='red', bold=True)
-                    return 'No office for fellow to be allocated into.'
+        if not self.offices['available'] and person_label == 'Staff':
+            click.secho(
+                'No offices to be allocated into currently.',
+                fg='red', bold=True)
+            return 'There are no offices created currently.'
+        if not self.living_spaces['available'] and not \
+                self.offices['available']:
+            click.secho(
+                'Create room first to add person. Not any room (office or living space)'
+                ' has been created in the system yet.',
+                fg='red', bold=True)
+            return 'There are no rooms in the system.'
+
+        if accommodate == 'Y' and person_label == 'Fellow':
+            if not self.living_spaces['available']:
+                output = 'Add a living space for this fellow '
+                output += 'to be allocated both.'
+                click.secho(output, fg='red', bold=True)
+                return 'No Living space for fellow to be allocated into.'
+            elif not self.offices['available']:
+                output = 'Add an office for this fellow '
+                output += 'to be allocated both .'
+                click.secho(output, fg='red', bold=True)
+                return 'No office for fellow to be allocated into.'
 
         return [all_names, accommodate, person_label]
 
@@ -195,7 +188,7 @@ class Amity(object):
                 self.f_ids.append(f_id)
                 person.assign_qualifier(identifier)
                 self.fellows.append(person.all_names)
-                self.people.append(person)
+                # self.people.append(person)
             elif person_label.title() == 'Staff':
                 person = Staff(all_namess[0], all_namess[1])
                 person.accommodate = accommodate
@@ -434,8 +427,6 @@ class Amity(object):
         else:
             click.secho('Unallocated people in the system.',
                         fg='green', bold=True)
-            print(self.unallocated_persons)
-
             for unallocated in self.unallocated_persons:
                 click.secho(unallocated, fg='cyan')
         if filename:
@@ -464,7 +455,7 @@ class Amity(object):
                         if room.room_type == 'Office':
                             office_allocated = room.room_name
                         if room.room_type == 'Living Space' and \
-                                person.accommodate == 'Y':
+                                        person.accommodate == 'Y':
                             ls_allocated = room.room_name
                         else:
                             ls_allocated = None
@@ -561,7 +552,7 @@ class Amity(object):
                     self.s_ids.append(s_id)
                     person.accommodate = p.wants_accommodation
                     person.get_all_names()
-                    self.fellows.append(person.all_names)
+                    self.staff.append(person.all_names)
             self.people.append(person)
             # Append person object to people list.
             for room in self.rooms:
@@ -573,40 +564,23 @@ class Amity(object):
                 self.unallocated_persons.append(p.person_name)
         return 'Db finished loading!!.'
 
-    def delete_person(self, first_name, other_name):
-        if type(first_name) != str or type(other_name) != str:
-            click.secho('Incorrect data type input.', fg='red', bold=True)
-            return 'input-Error, name should be string'
-
-        if not first_name.isalpha() or not other_name.isalpha():
-            click.secho('Names must be in alphabetical strings',
-                        fg='red', bold=True)
-            return 'Non-Alphabetical names added'
+    def delete_person(self, person_qualifier):
+        qualifier = person_qualifier
+        success_msg = "Person {} has been successfully deleted\n".format(qualifier)
 
         for person in self.people:
-            if person.all_names not in self.fellows:
-                msg = "Person {} does not exist!".format(person.all_names)
-                print(person.all_names)
-                click.secho(msg, bold=True, fg='red')
-                return msg
-            else:
+            if qualifier == person.qualifier:
+                self.people.remove(person)
                 for room in self.rooms:
-                    for occupant in room.occupants:
-                        if person == room.occupants:
-                            self.delete_person(occupant)
-                            person.is_active = False
-                for person in self.unallocated_persons:
-                    if person.all_names == int(person.person_id):
-                        action = self.unallocated_persons.index(person)
-                        del self.unallocated_persons[action]
-                if person.all_names == person.all_names:
-                    indx = self.people.index(person)
-                    del self.people[indx]
-                    person.is_active = False
-                    msg = "person {} has been successfully deleted" \
-                        .format(person.all_names)
-                    click.secho(msg, bold=True, fg='green')
-                    return msg
+                    if person.all_names in room.occupants:
+                        room.occupants.remove(person.all_names)
+                for person.all_names in self.unallocated_persons:
+                    if person.all_names in self.unallocated_persons:
+                        self.unallocated_persons.remove(person.all_names)
+            else:
+                return 'This person does not exist!'
+
+        return success_msg
 
     def delete_room(self, room_type, room_name):
         if type(room_type) != str or room_type.upper() not in ['O', 'L']:
@@ -625,25 +599,21 @@ class Amity(object):
         if room_type == 'O':
             room_type = 'Office'
         if room_type == 'L':
-            room_type = 'Living Space'
+            room_type = 'living_spaces'
         for room in self.rooms:
-            if room_type == 'Office':
-                room = Office(room_name)
-                if room_name not in self.offices['available'] or room_name not in self.living_spaces['available']:
+            if room_type == 'Office' or room_type == 'living_spaces':
+                if room_name not in self.offices['available'] and room_name not in self.living_spaces['available']:
                     msg = "Room {} does not exist!".format(room_name)
                     click.secho(msg, bold=True, fg='red')
                     return msg
-            else:
-                if room_name == room.room_name:
-                    if room.occupants:
-                        for occupant in room.occupants:
-                            self.unallocated_persons.append(occupant)
-                        room.occupants = []
-                    indx = self.rooms.index(room)
-                    del self.rooms[indx]
-
-                    room.in_use = False
-                    msg = "Room {} has been successfully deleted" \
-                        .format(room_name)
-                    click.secho(msg, bold=True, fg='green')
-                    return msg
+                else:
+                    if room_name == room.room_name:
+                        if room.occupants:
+                            for occupant in room.occupants:
+                                self.unallocated_persons.append(occupant)
+                        self.rooms.remove(room)
+                        room.in_use = False
+                        msg = "Room {} has been successfully deleted" \
+                            .format(room_name)
+                        click.secho(msg, bold=True, fg='green')
+                        return msg

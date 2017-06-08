@@ -287,12 +287,12 @@ class TestAmityFunctionality(unittest.TestCase):
     # tests that delete a room is successful
     def test_delete_room_functionality(self):
         self.amity.create_room("l", "room")
-        self.assertIn("room", self.amity.offices['available'])
+        self.assertNotIn("room", self.amity.offices['available'])
 
     # tests that delete person is successful
     def test_delete_person_functionality(self):
-        res = self.amity.validate_person('delete', 'this one', 'Fellow', 'y')
-        self.assertTrue(res)
+        res = self.amity.validate_person('mahad', 'kironde', 'Staff', 'n')
+        self.assertNotIn(res, self.amity.people)
 
 
 if __name__ == '__main__':
