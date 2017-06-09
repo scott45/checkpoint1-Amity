@@ -120,36 +120,13 @@ class Amity(object):
                 'Staff not given accommodation. only an office is allocated.',
                 fg='red', bold=True)
         all_names = first_name.title() + ' ' + other_name.title()
+
         for person in self.people:
             if person.all_names == all_names and \
                             person.person_label == person_label.title():
                 click.secho('%s %s Already Exists.' % (person_label, all_names))
-                return 'This Person exists.'
+                #return 'This Person exists.'
 
-        if not self.offices['available'] and person_label == 'Staff':
-            click.secho(
-                'No offices to be allocated into currently.',
-                fg='red', bold=True)
-            return 'There are no offices created currently.'
-        if not self.living_spaces['available'] and not \
-                self.offices['available']:
-            click.secho(
-                'Create room first to add person. Not any room (office or living space)'
-                ' has been created in the system yet.',
-                fg='red', bold=True)
-            return 'There are no rooms in the system.'
-
-        if accommodate == 'Y' and person_label == 'Fellow':
-            if not self.living_spaces['available']:
-                output = 'Add a living space for this fellow '
-                output += 'to be allocated both.'
-                click.secho(output, fg='red', bold=True)
-                return 'No Living space for fellow to be allocated into.'
-            elif not self.offices['available']:
-                output = 'Add an office for this fellow '
-                output += 'to be allocated both .'
-                click.secho(output, fg='red', bold=True)
-                return 'No office for fellow to be allocated into.'
 
         return [all_names, accommodate, person_label]
 
@@ -205,14 +182,12 @@ class Amity(object):
 
         return person
 
-    # allocating a room
     def allocate_room(self, person):
         click.secho('room allocation in progress....', fg='green')
         time.sleep(1)
         if person.person_label == 'Staff':
-            staff_single_allocation = {}
-            staff_single_allocation[person.all_names] = self.offices['available'][
-                randint(0, (len(self.offices['available']) - 1))]
+            staff_single_allocation = {person.all_names: self.offices['available'][
+                randint(0, (len(self.offices['available']) - 1))]}
             self.staff_allocations.append(staff_single_allocation)
             for room in self.rooms:
                 if room.room_name == staff_single_allocation[person.all_names]:
@@ -229,12 +204,15 @@ class Amity(object):
 
         if person.person_label == 'Fellow':
             if person.accommodate == 'Y':
-                fellow_single_allocation = {}
-                fellow_single_allocation['all_name'] = person.all_names
-                fellow_single_allocation['office'] = self.offices['available'][
-                    randint(0, (len(self.offices['available']) - 1))]
-                fellow_single_allocation['living_space'] = self.living_spaces['available'][
-                    randint(0, (len(self.living_spaces['available']) - 1))]
+                office = ""
+                if len(self.offices['available'])>0:
+                    office = self.offices['available'][randint(0, (len(self.offices['available']) - 1))]
+
+                living_space = ""
+                if len(self.living_spaces['available']) > 0:
+                    living_space = self.living_spaces['available'][randint(0, (len(self.living_spaces['available']) - 1))]
+
+                fellow_single_allocation = {'all_name': person.all_names, 'office': office, 'living_space': living_space}
                 self.fellow_allocations.append(fellow_single_allocation)
                 for room in self.rooms:
                     if room.room_name == fellow_single_allocation['office']:
@@ -262,10 +240,8 @@ class Amity(object):
                 click.secho('Success!', fg='green')
                 return 'Allocated both a living space and an office'
             else:
-                fellow_single_allocation = {}
-                fellow_single_allocation[person.all_names] = \
-                    self.offices['available'][
-                        randint(0, (len(self.offices['available']) - 1))]
+                fellow_single_allocation = {person.all_names: self.offices['available'][
+                    randint(0, (len(self.offices['available']) - 1))]}
                 self.fellow_allocations.append(fellow_single_allocation)
                 for room in self.rooms:
                     if room.room_name == \
@@ -280,6 +256,7 @@ class Amity(object):
                             msg = '%s has reached full capacity.' % room.room_name
                             msg += 'Please add another %s.' % room.room_type
                             click.secho(msg, fg='red', bold=True)
+
 
     # get qualifier for reallocation to enable operation
     def get_qualifier(self, first_name, last_name):
@@ -425,20 +402,21 @@ class Amity(object):
                         fg='cyan', bold=True)
             return 'No unallocated person.'
         else:
-            click.secho('Unallocated people in the system.',
-                        fg='green', bold=True)
-            for unallocated in self.unallocated_persons:
-                click.secho(unallocated, fg='cyan')
-        if filename:
-            file = open(filename + '.txt', 'w')
-            file.write("Unallocated people in the system.")
-            file.write('\n')
-            for unallocated in self.unallocated_persons:
-                file.write(unallocated)
-                file.write('\n')
-            click.secho('List stored in %s.txt' % filename, fg='cyan')
+            if filename is None:
+                click.secho('Unallocated people in the system.',
+                            fg='green', bold=True)
+                for unallocated in self.unallocated_persons:
+                    click.secho(unallocated, fg='cyan')
+                if filename:
+                    file = open(filename + '.txt', 'w')
+                    file.write("Unallocated people in the system.")
+                    file.write('\n')
+                    for unallocated in self.unallocated_persons:
+                        file.write(unallocated)
+                        file.write('\n')
+                    click.secho('List stored in %s.txt' % filename, fg='cyan')
 
-    # test save state functionality
+        #test save state functionality
     def save_state(self, db_name=None):
         if os.path.exists('amity_db.sqlite'):
             os.remove('amity_db.sqlite')
@@ -561,7 +539,8 @@ class Amity(object):
                 if p.office_allocated == room.room_name:
                     room.add_person(p.person_name)
             if p.office_allocated == 'Unallocated':
-                self.unallocated_persons.append(p.person_name)
+                if not p.person_name in self.unallocated_persons:
+                    self.unallocated_persons.append(p.person_name)
         return 'Db finished loading!!.'
 
     def delete_person(self, person_qualifier):
@@ -610,7 +589,8 @@ class Amity(object):
                     if room_name == room.room_name:
                         if room.occupants:
                             for occupant in room.occupants:
-                                self.unallocated_persons.append(occupant)
+                                if not occupant in self.unallocated_persons:
+                                    self.unallocated_persons.append(occupant)
                         self.rooms.remove(room)
                         room.in_use = False
                         msg = "Room {} has been successfully deleted" \
