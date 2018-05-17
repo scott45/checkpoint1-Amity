@@ -83,7 +83,7 @@ After ensuring the above, within the **amity folder** run :
 
 To run tests and view coverage.
 
-#7. IceBox.
+#7. IceBox (to-do's).
 
 1. Making the CI work online.
 
