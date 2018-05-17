@@ -6,7 +6,7 @@
 
 # Amity Room Allocation System.
 
->Done in fulfillment of the first checkpoint as a requirement in the Andela fellowship program.
+>Done in fulfillment of the first checkpoint as a requirement in the Andela developer fellowship program.
 
 #1. Problem definition.
 
