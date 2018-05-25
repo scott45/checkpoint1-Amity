@@ -85,7 +85,7 @@ To run tests and view coverage.
 
 #7. IceBox (to-do's).
 
-1. Making the CI work online.
+1. Integrate CI & CD.
 
 
 ## Credits
