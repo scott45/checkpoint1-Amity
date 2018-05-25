@@ -37,7 +37,7 @@ The criteria set to solve the problem is to ensure the rooms can and will be all
 There is also the need to have a way of determing how many people are at a particular space from time to time.
 
 
-#2. Commands.
+#2. Accepted Commands.
 
 Command | Argument | Example
 --- | --- | ---
