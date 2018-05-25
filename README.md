@@ -65,7 +65,7 @@ The following screencast shows how to run the different commands. Check it out:
 
 [![asciicast](https://asciinema.org/a/641tt6m2ljcn5jun51xyrjpwr.png)](https://asciinema.org/a/641tt6m2ljcn5jun51xyrjpwr)
 
-#6. Running Tests.
+#6. Running Tests locally.
 
 To run nosetests ensure that you are within the *virtual environment* and have the following installed:
 
