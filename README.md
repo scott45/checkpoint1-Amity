@@ -51,7 +51,7 @@ print_room | (room_name) | print_room try-it
 save_state | [--db=sqlite_database]| save_state --db=database
 load_state |(sqlite_database)|load_state my_dbname
 
-#3. Installation and set up.
+#3. Instruction for development set up.
 
 1. First clone this repository to your local machine using `git clone https://github.com/scott45/checkpoint1.git
 
