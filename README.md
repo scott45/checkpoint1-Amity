@@ -59,7 +59,7 @@ load_state |(sqlite_database)|load_state my_dbname
 
 4. cd into the **amityapp** folder and run `python main.py`
 
-#5. Usage video
+#5. Usage video (recorded)
 
 The following screencast shows how to run the different commands. Check it out:
 
