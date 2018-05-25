@@ -75,7 +75,7 @@ To run nosetests ensure that you are within the *virtual environment* and have t
 
 3. *coverage*
 
-After ensuring the above, within the **amity folder** run :
+After ensuring the above are installed within the **amity folder** run :
 
 `nosetests --with-coverage` and
 
