@@ -8,7 +8,7 @@
 
 >Done in fulfillment of the first checkpoint as a requirement in the Andela developer fellowship program.
 
-#1. Problem definition.
+1. Problem definition.
 
 The system serves to automate allocation of rooms (which can be either living spaces or offices) to fellows and staff at Andela.
 
